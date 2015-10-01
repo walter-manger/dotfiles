@@ -1,132 +1,231 @@
-;;;;
-;; Packages
-;;;;
+;;; package -- summary
+;;; Commentary: 
+;;; Code:
+(toggle-scroll-bar -1) 
 
-;; Define package repositories
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-             '("tromey" . "http://tromey.com/elpa/") t)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
-;; (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-;;                          ("marmalade" . "http://marmalade-repo.org/packages/")
-;;                          ("melpa" . "http://melpa-stable.milkbox.net/packages/")))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 
+(setq package-enable-at-startup nil)
 
-;; Load and activate emacs packages. Do this first so that the
-;; packages are loaded before you start trying to modify them.
-;; This also sets the load path.
 (package-initialize)
 
-;; Download the ELPA archive description if needed.
-;; This informs Emacs about the latest versions of all packages, and
-;; makes them available for download.
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; The packages you want installed. You can also install these
-;; manually with M-x package-install
-;; Add in your own as you wish:
-(defvar my-packages
-  '(;; makes handling lisp expressions much, much easier
-    ;; Cheatsheet: http://www.emacswiki.org/emacs/PareditCheatsheet
-    paredit
-
-    ;; key bindings and code colorization for Clojure
-    ;; https://github.com/clojure-emacs/clojure-mode
-    clojure-mode
-
-    ;; extra syntax highlighting for clojure
-    clojure-mode-extra-font-locking
-
-    ;; integration with a Clojure REPL
-    ;; https://github.com/clojure-emacs/cider
-    cider
-
-    ;; allow ido usage in as many contexts as possible. see
-    ;; customizations/navigation.el line 23 for a description
-    ;; of ido
-    ido-ubiquitous
-
-    ;; Enhances M-x to allow easier execution of commands. Provides
-    ;; a filterable list of possible commands in the minibuffer
-    ;; http://www.emacswiki.org/emacs/Smex
-    smex
-
-    ;; project navigation
-    projectile
-
-    ;; colorful parenthesis matching
-    rainbow-delimiters
-
-    ;; edit html tags like sexps
-    tagedit
-
-    ;; git integration
-    magit))
-
-;; On OS X, an Emacs instance started from the graphical user
-;; interface will have a different environment than a shell in a
-;; terminal window, because OS X does not run a shell during the
-;; login. Obviously this will lead to unexpected results when
-;; calling external utilities like make from Emacs.
-;; This library works around this problem by copying important
-;; environment variables from the user's shell.
-;; https://github.com/purcell/exec-path-from-shell
-(if (eq system-type 'darwin)
-    (add-to-list 'my-packages 'exec-path-from-shell))
-
-(dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+(defun require-package (package)
+  (setq-default highlight-tabs t)
+  "Install given PACKAGE."
+  (unless (package-installed-p package)
+    (unless (assoc package package-archive-contents)
+      (package-refresh-contents))
+    (package-install package)))
 
 
-;; Place downloaded elisp files in ~/.emacs.d/vendor. You'll then be able
-;; to load them.
-;;
-;; For example, if you download yaml-mode.el to ~/.emacs.d/vendor,
-;; then you can add the following code to this file:
-;;
-;; (require 'yaml-mode)
-;; (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-;; 
-;; Adding this code will make Emacs enter yaml mode whenever you open
-;; a .yml file
-(add-to-list 'load-path "~/.emacs.d/vendor")
+(setq evil-want-C-u-scroll t)
+
+(setq inhibit-splash-screen t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-message t)
+
+(visual-line-mode 1)
+(tool-bar-mode -1)
+
+(require 'evil)
+(evil-mode t)
+
+;; Cursor Colors for Modes (Only works in GUI)
+(setq evil-emacs-state-cursor '("red" box))
+(setq evil-normal-state-cursor '("darkgray" box))
+(setq evil-visual-state-cursor '("orange" box))
+(setq evil-insert-state-cursor '("red" bar))
+(setq evil-replace-state-cursor '("red" bar))
+(setq evil-operator-state-cursor '("red" hollow))
+
+;;; esc quits
+
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+
+(load-theme 'atom-dark t)
 
 
-;;;;
-;; Customization
-;;;;
+(eval-after-load "evil"
+  '(progn
+     (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+     (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+     (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+     (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+     (define-key evil-normal-state-map (kbd "C-n") 'neotree-toggle)))
 
-;; Add a directory to our load path so that when you `load` things
-;; below, Emacs knows where to look for the corresponding file.
-(add-to-list 'load-path "~/.emacs.d/customizations")
+;;; yasnippet
+;;; should be loaded before auto complete so that they can work together
+(require 'yasnippet)
+(yas-global-mode 1)
 
-;; Sets up exec-path-from-shell so that Emacs will use the correct
-;; environment variables
-(load "shell-integration.el")
+(add-to-list 'load-path "~/misc/emacs/go-autocomplete.el")
+;(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
 
-;; These customizations make it easier for you to navigate files,
-;; switch buffers, and choose options from the minibuffer.
-(load "navigation.el")
+(add-hook 'prog-mode-hook 'linum-mode)
 
-;; These customizations change the way emacs looks and disable/enable
-;; some user interface elements
-(load "ui.el")
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
-;; These customizations make editing a bit nicer.
-(load "editing.el")
+;; Use Emacs terminfo, not system terminfo
+(setq system-uses-terminfo nil)
 
-;; Hard-to-categorize customizations
-(load "misc.el")
+(require 'multi-term)
+(setq multi-term-program "/bin/zsh")
 
-;; For editing lisps
-(load "elisp-editing.el")
+(require 'evil-surround)
+(global-evil-surround-mode 1)
 
-;; Langauage-specific
-(load "setup-clojure.el")
-(load "setup-js.el")
+(add-hook 'term-mode-hook
+	  (lambda ()
+	    (setq term-buffer-maximum-size 10000)))
+
+(setenv "GOPATH" "/Users/waltermanger/go")
+
+(add-to-list 'load-path "~/misc/emacs/go-mode.el")
+(require 'go-mode-autoloads)
+
+(defun set-exec-path-from-shell-PATH ()
+  (let ((path-from-shell (replace-regexp-in-string
+                          "[ \t\n]*$"
+                          ""
+                          (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+    (setenv "PATH" path-from-shell)
+    (setq eshell-path-env path-from-shell) 
+    (setq exec-path (split-string path-from-shell path-separator))))
+
+(when window-system (set-exec-path-from-shell-PATH))
+
+;; Whitespace
+(setq-default indent-tabs-mode  nil
+              default-tab-width 2)
+
+
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
+
+(add-hook 'js-mode-hook
+          (lambda()
+            (js2-minor-mode 1)
+            (setq evil-shift-width default-tab-width)
+            ))
+
+(add-hook 'js2-mode-hook
+          (lambda()
+            (setq evil-shift-width default-tab-width)
+            (ac-js2-mode t)))
+
+;(add-hook 'js-mode-hook
+;          (lambda() flycheck-mode t))
+; (add-hook 'js2-mode-hook 'ac-js2-mode)
+(setq js2-highlight-level 3)
+
+; (add-hook 'go-mode-hook 'flycheck-mode)
+
+(defun my-go-mode-hook ()
+  (message "running my-go-mode-hook")
+  ; Call gofmt before saving
+  (add-hook 'before-save-hook 'gofmt-before-save))
+(add-hook 'go-mode-hook 'my-go-mode-hook)
+
+
+(require 'helm)
+(helm-autoresize-mode 1)
+(setq helm-display-header-line nil)
+(set-face-attribute 'helm-source-header nil 
+                    :foreground "white" 
+                    :background "gray27" 
+                    :height 2)
+(set-face-attribute 'helm-selection nil 
+                    :background "DeepSkyBlue2"
+                    :foreground "black")
+(setq helm-autoresize-max-height 30)
+(setq helm-autoresize-min-height 30)
+(setq helm-split-window-in-side-p t)
+
+(global-set-key (kbd "M-x") 'helm-M-x)
+(setq helm-M-x-fuzzy-match t)
+
+(global-set-key (kbd "C-x b") 'helm-mini)
+(setq helm-buffers-fuzzy-matching t
+      helm-recentf-fuzzy-match    t)
+
+(helm-mode 1)
+
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
+(setq make-backup-files nil) 
+
+
+(global-hl-line-mode 1)
+(set-face-background 'hl-line "#202")
+(set-face-attribute 'default nil :height 120)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(display-time-day-and-date t)
+ '(electric-indent-mode nil)
+ '(fci-rule-color "#373b41")
+ '(flycheck-disabled-checkers (quote (javascript-jshint)))
+ '(js2-basic-offset 2)
+ '(js2-include-browser-externs nil)
+ '(js2-include-jslint-globals nil)
+ '(js2-mode-show-parse-errors nil)
+ '(js2-mode-show-strict-warnings nil)
+ '(js2-strict-trailing-comma-warning nil))
+
+;(add-hook 'js-mode-hook
+;    (function (lambda()
+;        (setq evil-shift-width 2)))
+;
+;(add-hook 'js2-mode-hook
+;    (function (lambda()
+;        (setq evil-shift-width 2)))
+;
+;(add-hook 'javascript-mode
+;    (function (lambda()
+;        (setq evil-shift-width 2))))
+
+(add-hook 'sass-mode-hook
+    (function (lambda()
+        (setq evil-shift-width 2))))
+
+(global-flycheck-mode 1)
+
+; (require 'projectile)
+(projectile-global-mode)
+; (setq projectile-completion-system 'helm)
+; (helm-projectile-on)
+(require 'org)
+(setq org-default-notes-file (concat org-directory "/notes.org"))
+(setq org-agenda-files (list "~/org/notes.org"
+                             "~/org/blog.org"))
+;; fontify code in code blocks
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
+
+(provide 'init)
+
+(setq display-time-day-and-date t
+                display-time-24hr-format t)
+             (display-time)
+
+;;; init.el ends here
