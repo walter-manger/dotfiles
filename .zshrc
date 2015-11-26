@@ -53,7 +53,9 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/go
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$HOME/SDKs/go_appengine
-export pc6=$GOPATH/src/github.com/powerchordinc/pc6
+export pc6=$GOPATH/src/bitbucket.org/powerchord/platform
+unsetopt nomatch
+
 
 source $ZSH/oh-my-zsh.sh
 

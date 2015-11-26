@@ -2,6 +2,7 @@
 ;;; Commentary: 
 ;;; Code:
 (toggle-scroll-bar -1) 
+(global-auto-revert-mode t)
 
 (require 'package)
 
@@ -14,6 +15,7 @@
 (package-initialize)
 
 (defun require-package (package)
+  "Require a given PACKAGE."
   (setq-default highlight-tabs t)
   "Install given PACKAGE."
   (unless (package-installed-p package)
@@ -96,12 +98,14 @@
 (require 'go-mode-autoloads)
 
 (defun set-exec-path-from-shell-PATH ()
+  "Get the shell path from PATH."
   (let ((path-from-shell (replace-regexp-in-string
                           "[ \t\n]*$"
                           ""
                           (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq eshell-path-env path-from-shell) 
+    (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
     (setq exec-path (split-string path-from-shell path-separator))))
 
 (when window-system (set-exec-path-from-shell-PATH))
@@ -118,12 +122,12 @@
 (add-hook 'js-mode-hook
           (lambda()
             (js2-minor-mode 1)
-            (setq evil-shift-width default-tab-width)
+            (setq evil-shift-width tab-width)
             ))
 
 (add-hook 'js2-mode-hook
           (lambda()
-            (setq evil-shift-width default-tab-width)
+            (setq evil-shift-width tab-width)
             (ac-js2-mode t)))
 
 ;(add-hook 'js-mode-hook
@@ -134,6 +138,7 @@
 ; (add-hook 'go-mode-hook 'flycheck-mode)
 
 (defun my-go-mode-hook ()
+  "GOLang Hook."
   (message "running my-go-mode-hook")
   ; Call gofmt before saving
   (add-hook 'before-save-hook 'gofmt-before-save))
@@ -210,10 +215,11 @@
 
 (global-flycheck-mode 1)
 
-; (require 'projectile)
+(require 'projectile)
 (projectile-global-mode)
-; (setq projectile-completion-system 'helm)
+(setq projectile-completion-system 'helm)
 ; (helm-projectile-on)
+
 (require 'org)
 (setq org-default-notes-file (concat org-directory "/notes.org"))
 (setq org-agenda-files (list "~/org/notes.org"
@@ -222,10 +228,10 @@
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)
 
-(provide 'init)
-
 (setq display-time-day-and-date t
-                display-time-24hr-format t)
+                display-time-24hr-format nil)
              (display-time)
+
+(provide 'init)
 
 ;;; init.el ends here
