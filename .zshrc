@@ -1,6 +1,4 @@
-# Path to your oh-my-zsh installation.
-export ZSH=/Users/waltermanger/.oh-my-zsh
-
+export ZSH=~/.oh-my-zsh
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
@@ -10,7 +8,8 @@ ZSH_THEME="robbyrussell"
 # CASE_SENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+DISABLE_AUTO_UPDATE="true"
+DISABLE_UPDATE_PROMPT="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
@@ -44,22 +43,38 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git, zsh-wakatime)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/go/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/bin:/usr/local/share/dotnet:/Library/Frameworks/Mono.framework/Versions/Current/bin/"
 # export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$HOME/SDKs/go_appengine
-export pc6=$GOPATH/src/bitbucket.org/powerchord/platform
+export pc6=$GOPATH/src/github.com/powerchordinc/platform
+export MONGOLAB_URL=mongodb://sb-public:public@ds031832.mlab.com:31832/slack-battle
 unsetopt nomatch
 
+alias l='ls -al'
+alias ls='ls -GFh'
+alias pc6='cd $pc6'
+alias pc6work='cd $pc6 && sh build.sh work'
+alias pc6setup='cd $pc6 && sh build.sh setup'
 
-source $ZSH/oh-my-zsh.sh
+export NVM_DIR="$HOME/.nvm"
+   . "$(brew --prefix nvm)/nvm.sh"
 
-# You may need to manually set your language environment
+ #https://api.runscope.com/radar/47fa712b-b960-498a-85d7-babdee53e3a4/trigger?domain=http://api.pclocal.us&runscope_environment=db652228-9266-46db-a098-2b661f238308 
+ source $ZSH/oh-my-zsh.sh
+
+#Python Stuff
+
+export PIP_REQUIRE_VIRTUALENV=true
+
+# Wakatime
+
+
+#You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions

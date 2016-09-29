@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: beforeeach
+# key: bfe
+# binding: direct-keybinding
+# --
+BeforeEach(func() {
+    $0			
+})

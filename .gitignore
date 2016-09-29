@@ -1,5 +1,17 @@
 
-.emacs.d/recentf
-
-
 .emacs.d/ac-comphist.dat
+.emacs.d/elpa
+.emacs.d/recentf
+.emacs.d/.recentf
+.emacs.d/.harvest/
+.emacs.d/.sx/
+.emacs.d/.smex-items
+.emacs.d/cider-history
+.emacs.d/url/
+.emacs.d/emms/
+.emacs.d/ido.last
+.emacs.d/places
+.emacs.d/projectile-bookmarks.eld
+.emacs.d/bookmarks
+
+.vim/plugged

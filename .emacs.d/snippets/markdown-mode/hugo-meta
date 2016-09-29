@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: hugo-meta
+# key: hm
+# binding: direct-keybinding
+# --
++++
+
+date = "2016-01-01T15:01:17-07:00"
+date = `(format-time-string "%Y-%m-%dT%T%z" (current-time))`
+title = "$1"
+
++++
+$0

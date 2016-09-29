@@ -35,19 +35,21 @@ Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle'}
 Plug 'scrooloose/syntastic'
 Plug 'altercation/vim-colors-solarized'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'vim-airline/vim-airline'
+Plug 'ctrlpvim/ctrlp.vim'
 
 call plug#end()
 
 syntax enable
 set background=dark
 "let g:solarized_termcolors = 256
-colorscheme atom-dark-256 
-
+colorscheme atom-dark-256
 
 " NERDTree
 map <C-n> :NERDTreeToggle<CR>
 
 " set statusline=%t[%{strlen(&fenc)?&fenc:'none'},%{&ff}]%h%m%r%y%=%c,%l/%L\ %P
+set laststatus=2
 
 " Syntastic
 set statusline+=%#warningmsg#
@@ -59,8 +61,15 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_javascript_checkers = ['jscs']
-let g:syntastic_javascript_jscs_args = "--esprima=esprima-fb" 
-let g:syntastic_scss_checkers = [] 
+let g:syntastic_javascript_jscs_args = "--esprima=esprima-fb"
+let g:syntastic_scss_checkers = []
+
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
 
 " change shape of cursor in insert mode in iTerm 2
 let s:iterm   = exists('$ITERM_PROFILE') || exists('$ITERM_SESSION_ID') || filereadable(expand("~/.vim/.assume-iterm"))
@@ -84,7 +93,7 @@ if s:iterm
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H> 
+nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 

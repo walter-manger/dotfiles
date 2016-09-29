@@ -3,10 +3,10 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored"
- (filename . "~/org/notes.org")
- (front-context-string . "** TODO UserList")
- (rear-context-string . "listInfo:%20{]]\n")
- (position . 213))
+ (filename . "~/Dropbox/Org/work.org")
+ (front-context-string . "** TODO Possibly")
+ (rear-context-string . "s\n\n* Work Tasks\n")
+ (position . 83))
 ("org-capture-last-stored-marker"
  (filename . "~/org/notes.org")
  (front-context-string . "** TODO UserList")
@@ -14,7 +14,7 @@
  (position . 429))
 ("org-refile-last-stored"
  (filename . "~/org/notes.org")
- (front-context-string . "** TODO UserList")
- (rear-context-string . "esults:%200,]]\n\n")
- (position . 429))
+ (front-context-string . "** DONE Logout U")
+ (rear-context-string . "2016-04-15 Fri>\n")
+ (position . 30186))
 )

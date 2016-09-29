@@ -1,1 +1,5 @@
 alias node NODE_NO_READLINE=1 node
+alias blog-dir cd ~/org/wmanger_blog
+alias blog-serve hugo -s="~/org/wmanger_blog" server
+alias blog-browse (browse-url "http://localhost:1313")
+alias blog-publish hugo -s="~/org/wmanger_blog"

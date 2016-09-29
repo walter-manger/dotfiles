@@ -1,0 +1,14 @@
++++
+Categories = []
+Description = ""
+Tags = []
+date = "%(wm/insert-date-time)"
+menu = "main"
+title = ""
++++
+
+{{< highlight C>}}
+%i
+{{< /highlight >}}
+
+%?
