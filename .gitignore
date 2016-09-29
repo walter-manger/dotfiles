@@ -1,6 +1,6 @@
 
 .emacs.d/ac-comphist.dat
-.emacs.d/elpa
+.emacs.d/elpa/
 .emacs.d/recentf
 .emacs.d/.recentf
 .emacs.d/.harvest/
@@ -15,5 +15,6 @@
 .emacs.d/bookmarks
 .emacs.d/eshell/lastdir
 .emacs.d/eshell/history
+.emacs.d/games/
 
 .vim/plugged
