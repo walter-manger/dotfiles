@@ -237,7 +237,7 @@
   :defer t)
 
 (use-package go-autocomplete
-    :ensure t)
+  :ensure t)
 
 (defvar settings-dir)
 (defvar defuns-dir)
@@ -274,15 +274,13 @@
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'wombat t)
 
+(require 'auto-complete-config)
+
 (use-package auto-complete
   :ensure t
   :config
     (ac-config-default)
   )
-
-(use-package auto-complete-config
-  :ensure auto-complete)
-
 
 ;; Use Emacs terminfo, not system terminfo
 (setq system-uses-terminfo nil)
@@ -315,11 +313,10 @@
 
 (setenv "GOPATH" "/Users/waltermanger/go")
 
-;;(add-to-list 'load-path "~/misc/emacs/go-mode.el")
-;;(require 'go-mode-autoloads)
-
 (use-package go-mode
   :ensure t)
+
+(require 'go-mode-autoloads)
 
 (use-package go-eldoc
   :ensure t)
