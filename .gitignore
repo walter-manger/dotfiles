@@ -16,5 +16,6 @@
 .emacs.d/eshell/lastdir
 .emacs.d/eshell/history
 .emacs.d/games/
+.emacs.d/config.el
 
 .vim/plugged
