@@ -19,3 +19,4 @@
 .emacs.d/config.el
 
 .vim/plugged
+.vim/.netrwhist

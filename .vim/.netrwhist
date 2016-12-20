@@ -1,8 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
-let g:netrw_dirhist_1='/Users/waltermanger/go/src/github.com/powerchordinc/pc6/apps/adminweb/src'
-let g:netrw_dirhist_2='/Users/waltermanger/go/src/github.com/powerchordinc/pc6/apps/adminweb/src/components'
-let g:netrw_dirhist_3='/Users/waltermanger/go/src/github.com/powerchordinc/pc6/apps/adminweb/src/components/screen'
-let g:netrw_dirhist_4='/Users/waltermanger/go/src/github.com/powerchordinc/pc6/apps/adminweb/src/components/screen/table'
-let g:netrw_dirhist_5='/Users/waltermanger/go/src/bitbucket.org/powerchord/platform/apps/adminweb/web-src'
-let g:netrw_dirhist_6='/Users/waltermanger/go/src/bitbucket.org/powerchord/platform/apps/adminweb'

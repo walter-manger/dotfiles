@@ -43,7 +43,7 @@ DISABLE_UPDATE_PROMPT="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git, zsh-wakatime)
+plugins=(git vi-mode zsh-wakatime  zsh-completions)
 
 # User configuration
 
@@ -51,6 +51,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/bi
 # export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:/Applications/Racket\ v6.6/bin
 export pc6=$GOPATH/src/github.com/powerchordinc/platform
 export MONGOLAB_URL=mongodb://sb-public:public@ds031832.mlab.com:31832/slack-battle
 unsetopt nomatch
@@ -60,6 +61,7 @@ alias ls='ls -GFh'
 alias pc6='cd $pc6'
 alias pc6work='cd $pc6 && sh build.sh work'
 alias pc6setup='cd $pc6 && sh build.sh setup'
+alias e='emacsclient $1'
 
 export NVM_DIR="$HOME/.nvm"
    . "$(brew --prefix nvm)/nvm.sh"
@@ -104,3 +106,4 @@ alias tmux="TERM=screen-256color-bce tmux"
 
 fpath=( ~/.zfunc "${fpath[@]}")
 
+source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

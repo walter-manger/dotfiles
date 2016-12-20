@@ -18,8 +18,6 @@
 
 (setq org-archive-location (concat org-directory "/notes-archive"))
 
-;; Work File
-
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
 (setq org-src-tab-acts-natively t)

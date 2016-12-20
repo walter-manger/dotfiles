@@ -19,7 +19,9 @@
   (setq visible-bell nil)
   (setq ring-bell-function 'ignore)
 
+  (set-default-font "Hack")
   (set-face-attribute 'default nil :height 140)
+  (set-face-attribute 'fixed-pitch nil :height 140)
 
   (global-hl-line-mode 1)
   (set-face-attribute 'hl-line nil :foreground nil :background "#111" :inherit nil)
@@ -32,6 +34,7 @@
   (display-time)
 
   (show-paren-mode 1)
+  (column-number-mode t) ;; Yea, show column numbers too
 
   ;; These need to be loaded early.
   ;; I need to split this out
@@ -113,12 +116,17 @@
 
 #+END_SRC
 
+* Scheme
+#+BEGIN_SRC emacs-lisp
+  (setq scheme-program-name "/usr/local/bin/scheme/mit-scheme")
+  (setq geiser-default-implementation 'scheme)
+#+END_SRC
+
 * Yasnippet
   
 #+BEGIN_SRC emacs-lisp
 
   (use-package yasnippet
-    :defer t
     :ensure t
     :config
     (progn 
@@ -141,9 +149,9 @@
     :defer t
     :config
     (setq-default flycheck-emacs-lisp-load-path 'inherit)
-    (setq flycheck-jscs-esprima "=esprima-fb")
+    ;;(setq flycheck-jscs-esprima "=esprima-fb")
     (add-hook 'after-init-hook #'global-flycheck-mode)
-    (flycheck-add-mode 'javascript-jscs 'web-mode))
+    (flycheck-add-mode 'javascript-eslint 'web-mode))
 
 #+END_SRC
 
@@ -151,25 +159,40 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package org
-      :ensure t
-      :bind 
-      (("C-c c" . org-capture)
-      ("C-c a" . org-agenda)
-      ("C-c l" . org-store-link)))
-
-  (global-set-key (kbd "C-c n")
-      (lambda ()
-          (interactive)
-          (find-file "~/Dropbox/org/notes.org")))
-
-  (global-set-key (kbd "C-c w")
-      (lambda ()
-          (interactive)
-          (find-file "~/Dropbox/org/work.org")))
+    (use-package org
+        :ensure t
+        :bind 
+        (("C-c c" . org-capture)
+        ("C-c a" . org-agenda)
+        ("C-c l" . org-store-link)))
 
 
-  (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+    (global-set-key (kbd "C-c n")
+        (lambda ()
+            (interactive)
+            (find-file "~/Dropbox/org/notes.org")))
+
+    (global-set-key (kbd "C-c w")
+        (lambda ()
+            (interactive)
+            (find-file "~/Dropbox/org/work.org")))
+
+
+    (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+  (custom-set-faces
+   '(org-level-1 ((t (:inherit outline-1 :height 1.4))))
+   '(org-level-2 ((t (:inherit outline-2 :height 1.3))))
+   '(org-level-3 ((t (:inherit outline-3 :height 1.2))))
+   '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
+   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+   '(org-code ((t (:family "Hack"))))
+   '(org-table ((t (:family "Hack"))))
+  )
+
+    ;; How about trying out publishing to see if I can
+    ;; replace the need for a blog engine
 
 #+END_SRC
 
@@ -254,10 +277,22 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package smartparens
-    :ensure t
+  (use-package smartparens-config
+    :ensure smartparens
     :config 
-    (smartparens-global-mode 1))
+    (progn 
+      (show-smartparens-global-mode t)))
+
+  (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+
+  (sp-pair "{" nil :post-handlers '((wm/create-newline-and-enter-sexp "RET")))
+
+  (defun wm/create-newline-and-enter-sexp (&rest _ignored)
+    "Open a new brace or bracket expression, with relevant newlines and indent. "
+    (newline)
+    (indent-according-to-mode)
+    (forward-line -1)
+    (indent-according-to-mode))
 
 #+END_SRC
 
@@ -281,6 +316,7 @@
      :ensure t)
 
   (setq helm-dash-browser-func 'eww)
+
 
 #+END_SRC
 
@@ -352,10 +388,27 @@
 
 * Golang
 
+  Perhaps take some from here:
+  http://arenzana.org/2015/Emacs-for-Go/
+
+  Maybe go-guru?
+  https://docs.google.com/document/d/1_Y9xCEMj5S-7rv2ooHpZNH15JgRT5iM742gJkw5LtmQ/edit
+
+  https://www.youtube.com/watch?v=ak97oH0D6fI
+
+  This guy's config too:
+  http://www.tomcraven.io/post/my-go-development-environment/
+
 #+BEGIN_SRC emacs-lisp
 
   (use-package go-autocomplete
     :ensure t)
+
+  (use-package gotest
+    :ensure t
+    :bind (("C-c , m" . go-test-current-file)
+           ("C-c , s" . go-test-current-test)
+           ("C-c , a" . go-test-current-project)))
 
 #+END_SRC
 
@@ -375,165 +428,173 @@
   
 #+BEGIN_SRC emacs-lisp
 
-  (defvar settings-dir)
-  (defvar defuns-dir)
+    (defvar settings-dir)
+    (defvar defuns-dir)
 
-  (setq settings-dir
-        (expand-file-name "settings/" user-emacs-directory))
+    (setq settings-dir
+          (expand-file-name "settings/" user-emacs-directory))
 
-  ;; set up the settings folder
-  (add-to-list 'load-path settings-dir)
+    ;; set up the settings folder
+    (add-to-list 'load-path settings-dir)
 
-  ;; keep custom settings out of init.el
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (load custom-file)
+    ;; keep custom settings out of init.el
+    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+    (load custom-file)
 
-  (defun flycheck-list-errors-only-when-errors ()
-    "Open a error list buffer when there are errors to consider."
-    (if flycheck-current-errors
-        (flycheck-list-errors)
-      (-when-let (buffer (get-buffer flycheck-error-list-buffer))
-        (dolist (window (get-buffer-window-list buffer))
-          (quit-window nil window)))))
+    (defun flycheck-list-errors-only-when-errors ()
+      "Open a error list buffer when there are errors to consider."
+      (if flycheck-current-errors
+          (flycheck-list-errors)
+        (-when-let (buffer (get-buffer flycheck-error-list-buffer))
+          (dolist (window (get-buffer-window-list buffer))
+            (quit-window nil window)))))
 
-  ;; (require 'setup-appearance)
-  ;; (require 'setup-package)
-  ;; (require 'setup-smartparens)
-  ;; (require 'setup-emms)
-  ;; (require 'setup-helm)
-  ;; (require 'setup-evil)
-  (require 'setup-erc)
-  ;; (require 'setup-eshell)
-
-
-  ;; Themes
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (load-theme 'wombat t)
-
-  (require 'auto-complete-config)
-
-  (use-package auto-complete
-    :ensure t
-    :config
-      (ac-config-default)
-    )
-
-  ;; Use Emacs terminfo, not system terminfo
-  (setq system-uses-terminfo nil)
-
-  (require 'multi-term)
-  (setq multi-term-program "/bin/zsh")
-
-  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-  (defun set-exec-path-from-shell-PATH ()
-    "Get the shell path from PATH."
-    (let ((path-from-shell (replace-regexp-in-string
-                            "[ \t\n]*$"
-                            ""
-                            (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-      (setenv "PATH" path-from-shell)
-      (setq eshell-path-env path-from-shell)
-      (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
-      (setq exec-path (split-string path-from-shell path-separator))))
-
-  (when window-system (set-exec-path-from-shell-PATH))
+    ;; (require 'setup-appearance)
+    ;; (require 'setup-package)
+    ;; (require 'setup-smartparens)
+    ;; (require 'setup-emms)
+    ;; (require 'setup-helm)
+    ;; (require 'setup-evil)
+    (require 'setup-erc)
+    ;; (require 'setup-eshell)
 
 
-  (add-hook 'term-mode-hook
-      (lambda ()
-        (setq term-buffer-maximum-size 10000)))
+    ;; Themes
+    (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+    (load-theme 'wombat t)
 
-  (add-hook 'dired-mode-hook (lambda ()
-                               (dired-hide-details-mode 1)))
+    (require 'auto-complete-config)
 
-  (setenv "GOPATH" "/Users/waltermanger/go")
+    (use-package auto-complete
+      :ensure t
+      :config
+        (ac-config-default)
+      )
 
-  (use-package go-mode
-    :ensure t)
+    ;; Use Emacs terminfo, not system terminfo
+    (setq system-uses-terminfo nil)
 
-  (require 'go-mode-autoloads)
+    (require 'multi-term)
+    (setq multi-term-program "/bin/zsh")
+
+    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+    (defun set-exec-path-from-shell-PATH ()
+      "Get the shell path from PATH."
+      (let ((path-from-shell (replace-regexp-in-string
+                              "[ \t\n]*$"
+                              ""
+                              (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+        (setenv "PATH" path-from-shell)
+        (setq eshell-path-env path-from-shell)
+        (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
+        (setq exec-path (split-string path-from-shell path-separator))))
+
+    (when window-system (set-exec-path-from-shell-PATH))
+
+
+    (add-hook 'term-mode-hook
+        (lambda ()
+          (setq term-buffer-maximum-size 10000)))
+
+    (add-hook 'dired-mode-hook (lambda ()
+                                 (dired-hide-details-mode 1)))
+
+    (setenv "GOPATH" "/Users/waltermanger/go")
+
+    (use-package go-mode
+      :ensure t
+      :config (add-hook 'go-mode-hook
+                  (lambda ()
+                    (message "running go-mode hook") 
+                    (flycheck-mode)
+                    (go-eldoc-setup)
+                    ;;(local-set-key (kbd "M-.") 'godef-jump)
+                    (load-file "$GOPATH/src/golang.org/x/tools/cmd/oracle/oracle.el")
+                    ;; (setq gofmt-command "goimports")
+                    (add-hook 'before-save-hook 'gofmt-before-save)
+                    (setq-local helm-dash-docsets '("Go"))
+                    (setq go-play-browse-function 'browse-url))
+    ))
+
+    (require 'go-mode-autoloads)
 
     (use-package go-eldoc
-    :ensure t)
+      :ensure t)
 
-  (defun wm/go-mode-hook()
-    "GOLang Hook."
-    (setq evil-shift-width tab-width)
-    ;;(local-set-key (kbd "M-.") 'godef-jump)
-    (go-eldoc-setup)
-    (load-file "$GOPATH/src/golang.org/x/tools/cmd/oracle/oracle.el")
-    ;; (setq gofmt-command "goimports")
-    (add-hook 'before-save-hook 'gofmt-before-save))
+    ;; Whitespace
+    (setq-default fill-column 80)
+    (setq-default default-tab-width 2)
+    (setq-default evil-shift-width 2)
+    (setq-default indent-tabs-mode nil)
 
-  (add-hook 'go-mode-hook 'wm/go-mode-hook)
+    (electric-indent-mode 1)
 
-  ;; Whitespace
-  (setq-default indent-tabs-mode  nil
-                default-tab-width 2)
+    (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+    (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
+    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
-  (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+    (defun wm/web-mode-hook()
+      "Web-Mode Hook"
+      (setq web-mode-code-indent-offset 2)
+      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+      (setq-local helm-dash-docsets '("react" "javascript")))
 
-  (defun wm/web-mode-hook()
-    "Web-Mode Hook"
-    (setq evil-shift-width tab-width)
-    (setq web-mode-code-indent-offset tab-width)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors))
+    (defun wm/js2-mode-hook()
+      "js2 Hook"
+      (js2-minor-mode 1)
+      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+      (setq-local helm-dash-docsets '("react" "javascript")))
 
-  (defun wm/js2-mode-hook()
-    "js2 Hook"
-    (js2-minor-mode 1)
-    (setq evil-shift-width tab-width)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors))
+    (defun wm/sass-mode-hook()
+      "sass Hook"
+      (setq sass-indent-offset 2))
 
-  (add-hook 'js-mode-hook
-            (lambda()
-              (js2-minor-mode 1)
-              (setq evil-shift-width tab-width)
-              ))
+    (setq js2-highlight-level 3)
 
-  (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
+    (add-hook 'web-mode-hook 'wm/web-mode-hook)
+    (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
+    (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
 
-  (setq js2-highlight-level 3)
+    ;; store all backup and autosave files in the tmp dir
+    (setq backup-directory-alist
+          `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t)))
+     
+    (setq make-backup-files nil)
 
-  (add-hook 'web-mode-hook 'wm/web-mode-hook)
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+    (setq ispell-program-name "/usr/local/bin/aspell")
 
-  ;; store all backup and autosave files in the tmp dir
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
-   
-  (setq make-backup-files nil)
+    ;; Let's use projectile globally
 
-  ;;(add-hook 'sass-mode-hook
-  ;;    (function (lambda()
-  ;;        (setq evil-shift-width 2))))
+    (projectile-global-mode)
 
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+    ;; OrgModeSettings
+    (eval-after-load 'org '(require 'setup-orgmode))
 
-  (setq ispell-program-name "/usr/local/bin/aspell")
+    ;; defuns (load all files in defuns-dir)
+    (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+    (dolist (file (directory-files defuns-dir t "\\w+"))
+      (when (file-regular-p file)
+        (load file)))
 
-  ;; Let's use projectile globally
+    ;; Let's edit all text in Emacs please
+    (require 'edit-server)
+    (edit-server-start)
 
-  (projectile-global-mode)
+    (server-start)
 
-  ;; OrgModeSettings
-  (eval-after-load 'org '(require 'setup-orgmode))
-
-  ;; defuns (load all files in defuns-dir)
-  (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
-  (dolist (file (directory-files defuns-dir t "\\w+"))
-    (when (file-regular-p file)
-      (load file)))
-
-  ;; Let's edit all text in Emacs please
-  (require 'edit-server)
-  (edit-server-start)
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (message "Colorize Happening")
+    (toggle-read-only)
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    (toggle-read-only))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 #+END_SRC
   

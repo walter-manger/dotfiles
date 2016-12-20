@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: ctor
+# key: ctor
+# binding: direct-keybinding
+# --
+constructor() {
+              super()
+              this.state = {}
+}
