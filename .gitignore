@@ -1,8 +1,6 @@
 
 .emacs.d/ac-comphist.dat
 .emacs.d/elpa/
-.emacs.d/recentf
-.emacs.d/.recentf
 .emacs.d/.harvest/
 .emacs.d/.sx/
 .emacs.d/.smex-items
@@ -20,3 +18,11 @@
 
 .vim/plugged
 .vim/.netrwhist
+.emacs.d/tramp
+.gitignore_global
+.emacs.d/recentf~
+.emacs.d/*recentf
+.emacs.d/.cask/**/*
+.emacs.d/backups/**/*
+.emacs.d/auto-save-list/
+*.DS_Store

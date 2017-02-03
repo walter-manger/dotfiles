@@ -1,0 +1,19 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Issue Ticket
+# key: issue
+# binding: direct-keybinding
+# --
+*Issue:* $1
+
+*Steps to Reproduce:*
+1. $0
+
+*URL:* $2 
+
+*Actual Result:* $3
+
+*Expected Result:* $4
+
+*Browser:* Chrome 54
+
+*Role:* User

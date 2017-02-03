@@ -20,8 +20,8 @@
   (setq ring-bell-function 'ignore)
 
   (set-default-font "Hack")
-  (set-face-attribute 'default nil :height 140)
-  (set-face-attribute 'fixed-pitch nil :height 140)
+  (set-face-attribute 'default nil :height 150)
+  (set-face-attribute 'fixed-pitch nil :height 150)
 
   (global-hl-line-mode 1)
   ;; (set-face-attribute 'hl-line nil :foreground nil :background "#111" :inherit nil)
@@ -40,9 +40,11 @@
   ;; I need to split this out
 
   (use-package skewer-mode
+    :disabled t
     :ensure t)
 
   (use-package powerline
+    :disabled t
     :ensure t)
 
   (use-package projectile
@@ -52,11 +54,16 @@
     :ensure t)
 
   (use-package color-theme-sanityinc-solarized
+    :disabled t
+    :ensure t)
+
+  (use-package solarized-theme
+    :disabled t
     :ensure t)
 
   ;; Themes
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (load-theme 'sanityinc-solarized-dark t)
+  (load-theme 'zenburn  t)
 
 #+END_SRC
   
@@ -98,6 +105,40 @@
 
 #+END_SRC
 
+* Ediff
+
+#+BEGIN_SRC emacs-lisp
+
+
+  (setq ediff-window-setup-function 'ediff-setup-windows-multiframe)
+
+  (defun wm-ediff-hook ()
+    (ediff-setup-keymap)
+    (define-key ediff-mode-map "j" 'ediff-next-difference)
+    (define-key ediff-mode-map "k" 'ediff-previous-difference))
+
+  (add-hook 'ediff-mode-hook 'wm-ediff-hook)
+  (remove-hook 'ediff-mode-hook 'wm-ediff-hook)
+
+
+#+END_SRC
+
+* Spaceline
+
+#+BEGIN_SRC emacs-lisp
+
+  (setq ns-use-srgb-colorspace nil)
+  (setq powerline-default-separator 'arrow)
+  (setq powerline-height 28)
+
+  (use-package spaceline-config
+    :ensure spaceline
+    :config
+    (spaceline-spacemacs-theme)
+    (spaceline-helm-mode)
+    (setq spaceline-minor-modes-separator " "))
+
+#+END_SRC
 
 * Helm
 
@@ -189,6 +230,7 @@
 #+BEGIN_SRC emacs-lisp
 
   (use-package org
+    :diminish org-mode "O"
     :ensure t
     :bind 
     (("C-c c" . org-capture)
@@ -224,6 +266,7 @@
   ;; replace the need for a blog engine
 
   (use-package org-bullets
+    :diminish org-bullets-mode
     :ensure t
     :defer t)
 
@@ -382,6 +425,7 @@
 #+BEGIN_SRC emacs-lisp
 
   (use-package smartparens-config
+    :diminish smartparens-mode
     :ensure smartparens
     :config 
     (progn 
@@ -417,11 +461,12 @@
 #+BEGIN_SRC emacs-lisp
 
   (use-package smart-mode-line
-    :ensure t)
-
-  (setq sml/no-confirm-load-theme t)
-  (setq sml/theme 'respectful)
-  (sml/setup)
+    :disabled t
+    :ensure t
+    :config
+    (setq sml/no-confirm-load-theme t)
+    (setq sml/theme 'respectful)
+    (sml/setup))
 
 #+END_SRC
 
@@ -433,6 +478,7 @@
   (setq wakatime-cli-path "/usr/local/bin/wakatime")
 
   (global-wakatime-mode)
+
 
   ;;(add-to-list 'auto-mode-alist '("\\go\src\github.com\powerchordinc" . wakatime-mode))
   ;;(add-to-list 'auto-mode-alist '("\\Dropbox\org\work.org" . wakatime-mode))
@@ -500,6 +546,11 @@
 
 * Diminish
 
+Unicodes
+https://unicode-table.com/en/#miscellaneous-technical
+
+http://tromey.com/blog/?p=831
+
 #+BEGIN_SRC emacs-lisp
 
   (diminish 'undo-tree-mode)
@@ -507,6 +558,13 @@
   (diminish 'buffer-face-mode)
   (diminish 'projectile-mode)
   (diminish 'auto-revert-mode)
+  (diminish 'auto-fill-mode)
+  (diminish 'wakatime-mode (string 32 #x24cc))
+  (diminish 'helm-mode)
+  (diminish 'buffer-face-mode)
+  (diminish 'which-key-mode)
+  (diminish 'auto-fill-function)
+  (diminish 'visual-line-mode)
 
 #+END_SRC
 
@@ -584,14 +642,6 @@
   ;; (require 'setup-evil)
   ;; (require 'setup-erc)
   ;; (require 'setup-eshell)
-
-
-  (use-package color-theme-sanityinc-solarized
-    :ensure t)
-
-  ;; Themes
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-  (load-theme 'sanityinc-solarized-dark t)
 
   (require 'auto-complete-config)
 

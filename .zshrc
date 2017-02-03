@@ -62,6 +62,7 @@ alias pc6='cd $pc6'
 alias pc6work='cd $pc6 && sh build.sh work'
 alias pc6setup='cd $pc6 && sh build.sh setup'
 alias e='emacsclient $1'
+alias schemas='npm run schemas sync -- --trunk $1 --email wmanger@powerchordsystem.com'
 
 export NVM_DIR="$HOME/.nvm"
    . "$(brew --prefix nvm)/nvm.sh"
