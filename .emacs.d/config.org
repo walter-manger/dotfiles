@@ -31,12 +31,11 @@
   (defvar display-time-24hr-format)
   (setq display-time-24hr-format nil)
 
-  (display-time)
+  ;;(display-time)
 
   (show-paren-mode 1)
   (column-number-mode t) ;; Yea, show column numbers too
 
-  ;; These need to be loaded early.
   ;; I need to split this out
 
   (use-package skewer-mode
