@@ -19,9 +19,18 @@
   (setq visible-bell nil)
   (setq ring-bell-function 'ignore)
 
-  (set-default-font "Hack")
-  (set-face-attribute 'default nil :height 150)
-  (set-face-attribute 'fixed-pitch nil :height 150)
+  (if (member "Hack" (font-family-list))
+      (set-default-font "Hack")
+      (message "Hack font not found, go get it"))
+
+  (defvar font-size)
+  (setq font-size 100)
+
+  (when (> (x-display-pixel-width) 1366)
+    (setq font-size 150))
+
+  (set-face-attribute 'default nil :height font-size)
+  (set-face-attribute 'fixed-pitch nil :height font-size)
 
   (global-hl-line-mode 1)
   ;; (set-face-attribute 'hl-line nil :foreground nil :background "#111" :inherit nil)
@@ -108,15 +117,14 @@
 #+BEGIN_SRC emacs-lisp
 
 
-  (setq ediff-window-setup-function 'ediff-setup-windows-multiframe)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-  (defun wm-ediff-hook ()
-    (ediff-setup-keymap)
-    (define-key ediff-mode-map "j" 'ediff-next-difference)
-    (define-key ediff-mode-map "k" 'ediff-previous-difference))
+  ;; (defun wm-ediff-hook ()
+  ;;   (ediff-setup-keymap)
+  ;;   (define-key ediff-mode-map "j" 'ediff-next-difference)
+  ;;   (define-key ediff-mode-map "k" 'ediff-previous-difference))
 
-  (add-hook 'ediff-mode-hook 'wm-ediff-hook)
-  (remove-hook 'ediff-mode-hook 'wm-ediff-hook)
+  ;; (add-hook 'ediff-mode-hook 'wm-ediff-hook)
 
 
 #+END_SRC
@@ -668,7 +676,7 @@ http://tromey.com/blog/?p=831
       (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
       (setq exec-path (split-string path-from-shell path-separator))))
 
-  (when window-system (set-exec-path-from-shell-PATH))
+  (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
 
 
   (add-hook 'term-mode-hook
