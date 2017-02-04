@@ -483,7 +483,7 @@
   (setq wakatime-api-key "33c08473-7680-4203-b97d-64120cd743c1")
   (setq wakatime-cli-path "/usr/local/bin/wakatime")
 
-  (global-wakatime-mode)
+  (when (eq (window-system) 'ns) (global-wakatime-mode))
 
 
   ;;(add-to-list 'auto-mode-alist '("\\go\src\github.com\powerchordinc" . wakatime-mode))
@@ -702,7 +702,8 @@ http://tromey.com/blog/?p=831
                   (setq go-play-browse-function 'browse-url))
   ))
 
-  (require 'go-mode-autoloads)
+  (use-package go-mode-autoloads
+    :ensure t)
 
   (use-package go-eldoc
     :ensure t)

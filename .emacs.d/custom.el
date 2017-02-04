@@ -20,7 +20,7 @@
  '(js2-strict-trailing-comma-warning nil)
  '(package-selected-packages
    (quote
-    (solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
+    (go-mode-autoloads solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
