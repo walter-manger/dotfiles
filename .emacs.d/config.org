@@ -193,6 +193,7 @@
 #+END_SRC
 
 * Scheme
+
 #+BEGIN_SRC emacs-lisp
   (setq scheme-program-name "/usr/local/bin/scheme/mit-scheme")
   (setq geiser-default-implementation 'scheme)
@@ -202,6 +203,7 @@
   
 #+BEGIN_SRC emacs-lisp
 
+  ;; TODO: Make repos standard across environments
   (use-package yasnippet
     :ensure t
     :config
@@ -619,169 +621,178 @@ http://tromey.com/blog/?p=831
   
 #+BEGIN_SRC emacs-lisp
 
-  (defvar settings-dir)
-  (defvar defuns-dir)
+    (defvar settings-dir)
+    (defvar defuns-dir)
 
-  (setq settings-dir
-        (expand-file-name "settings/" user-emacs-directory))
+    (setq settings-dir
+          (expand-file-name "settings/" user-emacs-directory))
 
-  ;; set up the settings folder
-  (add-to-list 'load-path settings-dir)
+    ;; set up the settings folder
+    (add-to-list 'load-path settings-dir)
 
-  ;; keep custom settings out of init.el
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (load custom-file)
+    ;; keep custom settings out of init.el
+    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+    (load custom-file)
 
-  (defun flycheck-list-errors-only-when-errors ()
-    "Open a error list buffer when there are errors to consider."
-    (if flycheck-current-errors
-        (flycheck-list-errors)
-      (-when-let (buffer (get-buffer flycheck-error-list-buffer))
-        (dolist (window (get-buffer-window-list buffer))
-          (quit-window nil window)))))
+    (defun flycheck-list-errors-only-when-errors ()
+      "Open a error list buffer when there are errors to consider."
+      (if flycheck-current-errors
+          (flycheck-list-errors)
+        (-when-let (buffer (get-buffer flycheck-error-list-buffer))
+          (dolist (window (get-buffer-window-list buffer))
+            (quit-window nil window)))))
 
-  ;; (require 'setup-appearance)
-  ;; (require 'setup-package)
-  ;; (require 'setup-smartparens)
-  ;; (require 'setup-emms)
-  ;; (require 'setup-helm)
-  ;; (require 'setup-evil)
-  ;; (require 'setup-erc)
-  ;; (require 'setup-eshell)
+    ;; (require 'setup-appearance)
+    ;; (require 'setup-package)
+    ;; (require 'setup-smartparens)
+    ;; (require 'setup-emms)
+    ;; (require 'setup-helm)
+    ;; (require 'setup-evil)
+    ;; (require 'setup-erc)
+    ;; (require 'setup-eshell)
 
-  (require 'auto-complete-config)
+    (require 'auto-complete-config)
 
-  (use-package auto-complete
-    :ensure t
-    :config
-      (ac-config-default)
-    )
+    (use-package auto-complete
+      :ensure t
+      :config
+        (ac-config-default)
+      )
 
-  ;; Use Emacs terminfo, not system terminfo
-  (setq system-uses-terminfo nil)
-
-  (require 'multi-term)
-  (setq multi-term-program "/bin/zsh")
-
-  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-  (defun set-exec-path-from-shell-PATH ()
-    "Get the shell path from PATH."
-    (let ((path-from-shell (replace-regexp-in-string
-                            "[ \t\n]*$"
-                            ""
-                            (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-      (setenv "PATH" path-from-shell)
-      (setq eshell-path-env path-from-shell)
-      (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
-      (setq exec-path (split-string path-from-shell path-separator))))
-
-  (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
+    ;; Use Emacs terminfo, not system terminfo
+    (setq system-uses-terminfo nil)
 
 
-  (add-hook 'term-mode-hook
-      (lambda ()
-        (setq term-buffer-maximum-size 10000)))
+    (use-package multi-term
+      :ensure t
+      :config
+        (setq multi-term-program "/bin/zsh"))
 
-  (add-hook 'dired-mode-hook (lambda ()
-                               (dired-hide-details-mode 1)))
+    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-  (setenv "GOPATH" "/Users/waltermanger/go")
+    (defun set-exec-path-from-shell-PATH ()
+      "Get the shell path from PATH."
+      (let ((path-from-shell (replace-regexp-in-string
+                              "[ \t\n]*$"
+                              ""
+                              (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+        (setenv "PATH" path-from-shell)
+        (setq eshell-path-env path-from-shell)
+        (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
+        (setq exec-path (split-string path-from-shell path-separator))))
 
-  (use-package go-mode
-    :ensure t
-    :config (add-hook 'go-mode-hook
-                (lambda ()
-                  (flycheck-mode)
-                  (go-eldoc-setup)
-                  ;; (local-set-key (kbd "M-.") 'godef-jump)
-                  (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
-                  ;; (setq gofmt-command "goimports")
-                  (add-hook 'before-save-hook 'gofmt-before-save)
-                  (setq-local helm-dash-docsets '("Go"))
-                  (setq go-play-browse-function 'browse-url))
-  ))
+    (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
 
-  (use-package go-mode-autoloads
-    :ensure t)
+    (add-hook 'term-mode-hook
+        (lambda ()
+          (setq term-buffer-maximum-size 10000)))
 
-  (use-package go-eldoc
-    :ensure t)
+    (add-hook 'dired-mode-hook (lambda ()
+                                 (dired-hide-details-mode 1)))
 
-  ;; Whitespace
-  (setq-default fill-column 80)
-  (setq-default default-tab-width 2)
-  (setq-default evil-shift-width 2)
-  (setq-default indent-tabs-mode nil)
+    ;; TODO: Make sure this is consistent across environments
+    (setenv "GOPATH" "/Users/waltermanger/go")
 
-  (electric-indent-mode 1)
+    (use-package go-mode
+      :ensure t
+      :config 
+        ;; preloaded with previous call
+        ;; (use-package go-mode-autoloads :ensure nil)
+        (add-hook 'go-mode-hook
+                  (lambda ()
+                    (flycheck-mode)
+                    (go-eldoc-setup)
+                    ;; (local-set-key (kbd "M-.") 'godef-jump)
+                    (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
+                    ;; (setq gofmt-command "goimports")
+                    (add-hook 'before-save-hook 'gofmt-before-save)
+                    (setq-local helm-dash-docsets '("Go"))
+                    (setq go-play-browse-function 'browse-url))
+    ))
 
-  (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+    (use-package go-eldoc
+      :ensure t)
 
-  (defun wm/web-mode-hook()
-    "Web-Mode Hook"
-    (setq web-mode-code-indent-offset 2)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-    (setq-local helm-dash-docsets '("react" "javascript")))
+    ;; Whitespace
+    (setq-default fill-column 80)
+    (setq-default default-tab-width 2)
+    (setq-default evil-shift-width 2)
+    (setq-default indent-tabs-mode nil)
 
-  (defun wm/js2-mode-hook()
-    "js2 Hook"
-    (js2-minor-mode 1)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-    (setq-local helm-dash-docsets '("react" "javascript")))
+    (electric-indent-mode 1)
 
-  (defun wm/sass-mode-hook()
-    "sass Hook"
-    (setq sass-indent-offset 2))
+    (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+    (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
+    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
-  (setq js2-highlight-level 3)
+    (defun wm/web-mode-hook()
+      "Web-Mode Hook"
+      (setq web-mode-code-indent-offset 2)
+      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+      (setq-local helm-dash-docsets '("react" "javascript")))
 
-  (add-hook 'web-mode-hook 'wm/web-mode-hook)
-  (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
-  (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
+    (defun wm/js2-mode-hook()
+      "js2 Hook"
+      (js2-minor-mode 1)
+      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+      (setq-local helm-dash-docsets '("react" "javascript")))
 
-  ;; store all backup and autosave files in the tmp dir
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
-   
-  (setq make-backup-files nil)
+    (defun wm/sass-mode-hook()
+      "sass Hook"
+      (setq sass-indent-offset 2))
 
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+    (setq js2-highlight-level 3)
 
-  (setq ispell-program-name "/usr/local/bin/aspell")
+    (add-hook 'web-mode-hook 'wm/web-mode-hook)
+    (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
+    (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
 
-  ;; Let's use projectile globally
+    ;; store all backup and autosave files in the tmp dir
+    (setq backup-directory-alist
+          `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t)))
+     
+    (setq make-backup-files nil)
 
-  (projectile-global-mode)
+    (use-package rainbow-delimiters
+      :ensure t
+      :config
+        (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-  ;; OrgModeSettings
-  ;; (eval-after-load 'org '(require 'setup-orgmode))
+    ;; TODO: make this standard across environments
+    (setq ispell-program-name "/usr/local/bin/aspell")
 
-  ;; defuns (load all files in defuns-dir)
-  (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
-  (dolist (file (directory-files defuns-dir t "\\w+"))
-    (when (file-regular-p file)
-      (load file)))
+    ;; Let's use projectile globally
 
-  ;; Let's edit all text in Emacs please
-  (require 'edit-server)
-  (edit-server-start)
+    (projectile-global-mode)
 
-  (server-start)
+    ;; OrgModeSettings
+    ;; (eval-after-load 'org '(require 'setup-orgmode))
 
-  ;; Go-Test needs some color when using Ginkgo
-  (require 'ansi-color)
-  (defun colorize-compilation-buffer ()
-    (message "Colorize Happening")
-    (toggle-read-only)
-    (ansi-color-apply-on-region compilation-filter-start (point))
-    (toggle-read-only))
-  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+    ;; defuns (load all files in defuns-dir)
+    (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+    (dolist (file (directory-files defuns-dir t "\\w+"))
+      (when (file-regular-p file)
+        (load file)))
+
+    ;; Let's edit all text in Emacs please
+    (use-package edit-server
+      :ensure t) 
+
+    (edit-server-start)
+
+    (server-start)
+
+    ;; Go-Test needs some color when using Ginkgo
+    (require 'ansi-color)
+    (defun colorize-compilation-buffer ()
+      (message "Colorize Happening")
+      (toggle-read-only)
+      (ansi-color-apply-on-region compilation-filter-start (point))
+      (toggle-read-only))
+    (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 #+END_SRC
   
