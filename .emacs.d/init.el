@@ -1,3 +1,8 @@
+;;; package --- init initialized emacs
+
+;;; Commentary:
+
+;;; Code:
 
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -11,3 +16,8 @@
 	(package-install 'use-package))
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
+
+(provide 'init)
+
+;;; init.el ends here
+
