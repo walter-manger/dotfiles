@@ -85,6 +85,8 @@
   
 * Dired
 
+  When I have two dired windows open, if I invoke Rename on a file, rename it to the other Dired directory.
+
   #+BEGIN_SRC emacs-lisp
 
     (setq dired-dwim-target t)
@@ -113,10 +115,6 @@
 
   (use-package tern-auto-complete
     :ensure t)
-
-  ;; (use-package jade
-  ;;   :ensure t
-  ;;   :init (add-hook 'web-mode-hook 'jade-interaction-mode))
 
 #+END_SRC
 
@@ -163,13 +161,6 @@
 
   (helm-autoresize-mode 1)
   (setq helm-display-header-line nil)
-  ;; (set-face-attribute 'helm-source-header nil
-  ;;                     :foreground "white"
-  ;;                     :background "gray27"
-  ;;                     :height 2)
-  ;; (set-face-attribute 'helm-selection nil
-  ;;                     :background "DeepSkyBlue2"
-  ;;                     :foreground "black")
   (setq helm-autoresize-max-height 30)
   (setq helm-autoresize-min-height 30)
   (setq helm-split-window-in-side-p t)
@@ -190,7 +181,6 @@
   (add-to-list 'projectile-globally-ignored-directories "docs/dash")
   (add-to-list 'projectile-globally-ignored-directories "vendor")
   (helm-projectile-on)
-
 
   (use-package helm-ag
     :ensure t)
@@ -471,7 +461,6 @@
 
   (setq helm-dash-browser-func 'eww)
 
-
 #+END_SRC
 
 * Smart Mode Line
@@ -496,23 +485,6 @@
   (setq wakatime-cli-path "/usr/local/bin/wakatime")
 
   (when (eq (window-system) 'ns) (global-wakatime-mode))
-
-
-  ;;(add-to-list 'auto-mode-alist '("\\go\src\github.com\powerchordinc" . wakatime-mode))
-  ;;(add-to-list 'auto-mode-alist '("\\Dropbox\org\work.org" . wakatime-mode))
-  ;;(add-to-list 'auto-mode-alist '("\\Dropbox\org\notes.org" . wakatime-mode))
-  ;;(add-to-list 'auto-mode-alist '("\\dotfiles\*" . wakatime-mode))
-
-  (defun turn-on-wakatime ()
-      (cond ((string-match "dotfiles\\|github\.com/\powerchordinc\\|work\.org" buffer-file-name)
-             (progn ((wakatime-turn-on t))))))
-
-  ;;(add-hook 'eshell-mode-hook #'wakatime-mode)
-  ;;(add-hook 'org-mode-hook 'turn-on-wakatime)
-  ;;(add-hook 'js-mode-hook 'turn-on-wakatime)
-  ;;(add-hook 'go-mode-hook 'turn-on-wakatime)
-  ;;(add-hook 'sass-mode-hook 'turn-on-wakatime)
-
 
 #+END_SRC
 
@@ -551,14 +523,34 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package go-autocomplete
-    :ensure t)
+  ;; Not sure if I still need this
+  ;; (setenv "GOPATH" "~/go")
 
-  (use-package gotest
-    :ensure t
-    :bind (("C-c , m" . go-test-current-file)
-           ("C-c , s" . go-test-current-test)
-           ("C-c , a" . go-test-current-project)))
+    (use-package go-mode
+     :ensure t 
+     :config (add-hook 'go-mode-hook
+                 (lambda ()
+                   (flycheck-mode)
+                   (go-eldoc-setup)
+                   ;; (local-set-key (kbd "M-.") 'godef-jump)
+                   (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
+                   ;; (setq gofmt-command "goimports")
+                   (add-hook 'before-save-hook 'gofmt-before-save)
+                   (setq-local helm-dash-docsets '("Go"))
+                   (setq go-play-browse-function 'browse-url))
+   ))
+
+   (use-package go-eldoc
+     :ensure t)
+
+   (use-package go-autocomplete
+     :ensure t)
+
+   (use-package gotest
+     :ensure t
+     :bind (("C-c , m" . go-test-current-file)
+            ("C-c , s" . go-test-current-test)
+            ("C-c , a" . go-test-current-project)))
 
 #+END_SRC
 
@@ -630,335 +622,278 @@ http://tromey.com/blog/?p=831
   
 #+BEGIN_SRC emacs-lisp
 
-    (defvar settings-dir)
-    (defvar defuns-dir)
-
-    (setq settings-dir
-          (expand-file-name "settings/" user-emacs-directory))
-
-    ;; set up the settings folder
-    (add-to-list 'load-path settings-dir)
-
-    ;; keep custom settings out of init.el
-    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-    (load custom-file)
-
-    (defun flycheck-list-errors-only-when-errors ()
-      "Open a error list buffer when there are errors to consider."
-      (if flycheck-current-errors
-          (flycheck-list-errors)
-        (-when-let (buffer (get-buffer flycheck-error-list-buffer))
-          (dolist (window (get-buffer-window-list buffer))
-            (quit-window nil window)))))
-
-    ;; (require 'setup-appearance)
-    ;; (require 'setup-package)
-    ;; (require 'setup-smartparens)
-    ;; (require 'setup-emms)
-    ;; (require 'setup-helm)
-    ;; (require 'setup-evil)
-    ;; (require 'setup-erc)
-    ;; (require 'setup-eshell)
-
-    (require 'auto-complete-config)
-
-    (use-package auto-complete
-      :ensure t
-      :config
-        (ac-config-default)
-      )
-
-    ;; Use Emacs terminfo, not system terminfo
-    (setq system-uses-terminfo nil)
-
-    (require 'multi-term)
-    (setq multi-term-program "/bin/zsh")
-
-    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-    (defun set-exec-path-from-shell-PATH ()
-      "Get the shell path from PATH."
-      (let ((path-from-shell (replace-regexp-in-string
-                              "[ \t\n]*$"
-                              ""
-                              (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-        (setenv "PATH" path-from-shell)
-        (setq eshell-path-env path-from-shell)
-        (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
-        (setq exec-path (split-string path-from-shell path-separator))))
-
-    (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
-
-
-    (add-hook 'term-mode-hook
-        (lambda ()
-          (setq term-buffer-maximum-size 10000)))
-
-    (add-hook 'dired-mode-hook (lambda ()
-                                 (dired-hide-details-mode 1)))
-
-    (setenv "GOPATH" "/Users/waltermanger/go")
-
-    (use-package go-mode
-      :ensure t
-      :config (add-hook 'go-mode-hook
-                  (lambda ()
-                    (flycheck-mode)
-                    (go-eldoc-setup)
-                    ;; (local-set-key (kbd "M-.") 'godef-jump)
-                    (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
-                    ;; (setq gofmt-command "goimports")
-                    (add-hook 'before-save-hook 'gofmt-before-save)
-                    (setq-local helm-dash-docsets '("Go"))
-                    (setq go-play-browse-function 'browse-url))
-    ))
-
-    (require 'go-mode-autoloads)
-
-    (use-package go-eldoc
-      :ensure t)
-
-    (use-package json-mode
-      :ensure t)
-
-    ;; Whitespace
-    (setq-default fill-column 80)
-    (setq-default default-tab-width 2)
-    (setq-default evil-shift-width 2)
-    (setq-default indent-tabs-mode nil)
-
-    (electric-indent-mode 1)
-
-    (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
-    (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
-    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-    (defun wm/web-mode-hook()
-      "Web-Mode Hook"
-      (setq web-mode-code-indent-offset 2)
-      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-      (setq-local helm-dash-docsets '("react" "javascript")))
-
-    (defun wm/js2-mode-hook()
-      "js2 Hook"
-      (js2-minor-mode 1)
-      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-      (setq-local helm-dash-docsets '("react" "javascript")))
-
-    (defun wm/sass-mode-hook()
-      "sass Hook"
-      (setq sass-indent-offset 2))
-
-    (setq js2-highlight-level 3)
-
-    (add-hook 'web-mode-hook 'wm/web-mode-hook)
-    (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
-    (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
-
-    ;; store all backup and autosave files in the tmp dir
-    (setq backup-directory-alist
-          `((".*" . ,temporary-file-directory)))
-    (setq auto-save-file-name-transforms
-          `((".*" ,temporary-file-directory t)))
-     
-    (setq make-backup-files nil)
-
-    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-
-    (setq ispell-program-name "/usr/local/bin/aspell")
-
-    ;; Let's use projectile globally
-
-    (projectile-global-mode)
-
-    ;; OrgModeSettings
-    ;; (eval-after-load 'org '(require 'setup-orgmode))
-
-    ;; defuns (load all files in defuns-dir)
-    (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
-    (dolist (file (directory-files defuns-dir t "\\w+"))
-      (when (file-regular-p file)
-        (load file)))
-
-    ;; Let's edit all text in Emacs please
-    (require 'edit-server)
-    (edit-server-start)
-
-    (server-start)
-
-    (defvar settings-dir)
-    (defvar defuns-dir)
-
-    (setq settings-dir
-          (expand-file-name "settings/" user-emacs-directory))
-
-    ;; set up the settings folder
-    (add-to-list 'load-path settings-dir)
-
-    ;; keep custom settings out of init.el
-    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-    (load custom-file)
-
-    (defun flycheck-list-errors-only-when-errors ()
-      "Open a error list buffer when there are errors to consider."
-      (if flycheck-current-errors
-          (flycheck-list-errors)
-        (-when-let (buffer (get-buffer flycheck-error-list-buffer))
-          (dolist (window (get-buffer-window-list buffer))
-            (quit-window nil window)))))
-
-    ;; (require 'setup-appearance)
-    ;; (require 'setup-package)
-    ;; (require 'setup-smartparens)
-    ;; (require 'setup-emms)
-    ;; (require 'setup-helm)
-    ;; (require 'setup-evil)
-    ;; (require 'setup-erc)
-    ;; (require 'setup-eshell)
-
-    (require 'auto-complete-config)
-
-    (use-package auto-complete
-      :ensure t
-      :config
-        (ac-config-default)
-      )
-
-    ;; Use Emacs terminfo, not system terminfo
-    (setq system-uses-terminfo nil)
-
-
-    (use-package multi-term
-      :ensure t
-      :config
-        (setq multi-term-program "/bin/zsh"))
-
-    (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
-    (defun set-exec-path-from-shell-PATH ()
-      "Get the shell path from PATH."
-      (let ((path-from-shell (replace-regexp-in-string
-                              "[ \t\n]*$"
-                              ""
-                              (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-        (setenv "PATH" path-from-shell)
-        (setq eshell-path-env path-from-shell)
-        (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
-        (setq exec-path (split-string path-from-shell path-separator))))
-
-    (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
-
-    (add-hook 'term-mode-hook
-        (lambda ()
-          (setq term-buffer-maximum-size 10000)))
-
-    (add-hook 'dired-mode-hook (lambda ()
-                                 (dired-hide-details-mode 1)))
-
-    ;; TODO: Make sure this is consistent across environments
-    (setenv "GOPATH" "/Users/waltermanger/go")
-
-    (use-package go-mode
-      :ensure t
-      :config 
-        ;; preloaded with previous call
-        ;; (use-package go-mode-autoloads :ensure nil)
-        (add-hook 'go-mode-hook
-                  (lambda ()
-                    (flycheck-mode)
-                    (go-eldoc-setup)
-                    ;; (local-set-key (kbd "M-.") 'godef-jump)
-                    (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
-                    ;; (setq gofmt-command "goimports")
-                    (add-hook 'before-save-hook 'gofmt-before-save)
-                    (setq-local helm-dash-docsets '("Go"))
-                    (setq go-play-browse-function 'browse-url))
-    ))
-
-    (use-package go-eldoc
-      :ensure t)
-
-    ;; Whitespace
-    (setq-default fill-column 80)
-    (setq-default default-tab-width 2)
-    (setq-default evil-shift-width 2)
-    (setq-default indent-tabs-mode nil)
-
-    (electric-indent-mode 1)
-
-    (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-    (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-    (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
-    (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-    (defun wm/web-mode-hook()
-      "Web-Mode Hook"
-      (setq web-mode-code-indent-offset 2)
-      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-      (setq-local helm-dash-docsets '("react" "javascript")))
-
-    (defun wm/js2-mode-hook()
-      "js2 Hook"
-      (js2-minor-mode 1)
-      (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-      (setq-local helm-dash-docsets '("react" "javascript")))
-
-    (defun wm/sass-mode-hook()
-      "sass Hook"
-      (setq sass-indent-offset 2))
-
-    (setq js2-highlight-level 3)
-
-    (add-hook 'web-mode-hook 'wm/web-mode-hook)
-    (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
-    (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
-
-    ;; store all backup and autosave files in the tmp dir
-    (setq backup-directory-alist
-          `((".*" . ,temporary-file-directory)))
-    (setq auto-save-file-name-transforms
-          `((".*" ,temporary-file-directory t)))
-     
-    (setq make-backup-files nil)
-
-    (use-package rainbow-delimiters
-      :ensure t
-      :config
-        (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-
-    ;; TODO: make this standard across environments
-    (setq ispell-program-name "/usr/local/bin/aspell")
-
-    ;; Let's use projectile globally
-
-    (projectile-global-mode)
-
-    ;; OrgModeSettings
-    ;; (eval-after-load 'org '(require 'setup-orgmode))
-
-    ;; defuns (load all files in defuns-dir)
-    (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
-    (dolist (file (directory-files defuns-dir t "\\w+"))
-      (when (file-regular-p file)
-        (load file)))
-
-    ;; Let's edit all text in Emacs please
-    (use-package edit-server
-      :ensure t) 
-
-    (edit-server-start)
-
-    (server-start)
-
-    ;; Go-Test needs some color when using Ginkgo
-    (require 'ansi-color)
-    (defun colorize-compilation-buffer ()
-      (message "Colorize Happening")
-      (toggle-read-only)
-      (ansi-color-apply-on-region compilation-filter-start (point))
-      (toggle-read-only))
-    (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+  (defvar settings-dir)
+  (defvar defuns-dir)
+
+  (setq settings-dir
+        (expand-file-name "settings/" user-emacs-directory))
+
+  ;; set up the settings folder
+  (add-to-list 'load-path settings-dir)
+
+  ;; keep custom settings out of init.el
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+
+  (defun flycheck-list-errors-only-when-errors ()
+    "Open a error list buffer when there are errors to consider."
+    (if flycheck-current-errors
+        (flycheck-list-errors)
+      (-when-let (buffer (get-buffer flycheck-error-list-buffer))
+        (dolist (window (get-buffer-window-list buffer))
+          (quit-window nil window)))))
+
+  (require 'auto-complete-config)
+
+  (use-package auto-complete
+    :ensure t
+    :config
+      (ac-config-default)
+    )
+
+  ;; Use Emacs terminfo, not system terminfo
+  (setq system-uses-terminfo nil)
+
+  (require 'multi-term)
+  (setq multi-term-program "/bin/zsh")
+
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+  (defun set-exec-path-from-shell-PATH ()
+    "Get the shell path from PATH."
+    (let ((path-from-shell (replace-regexp-in-string
+                            "[ \t\n]*$"
+                            ""
+                            (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+      (setenv "PATH" path-from-shell)
+      (setq eshell-path-env path-from-shell)
+      (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
+      (setq exec-path (split-string path-from-shell path-separator))))
+
+  (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
+
+
+  (add-hook 'term-mode-hook
+      (lambda ()
+        (setq term-buffer-maximum-size 10000)))
+
+  (add-hook 'dired-mode-hook (lambda ()
+                               (dired-hide-details-mode 1)))
+
+  (use-package json-mode
+    :ensure t)
+
+  ;; Whitespace
+  (setq-default fill-column 80)
+  (setq-default default-tab-width 2)
+  (setq-default evil-shift-width 2)
+  (setq-default indent-tabs-mode nil)
+
+  (electric-indent-mode 1)
+
+  (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
+  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
+  (defun wm/web-mode-hook()
+    "Web-Mode Hook"
+    (setq web-mode-code-indent-offset 2)
+    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    (setq-local helm-dash-docsets '("react" "javascript")))
+
+  (defun wm/js2-mode-hook()
+    "js2 Hook"
+    (js2-minor-mode 1)
+    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    (setq-local helm-dash-docsets '("react" "javascript")))
+
+  (defun wm/sass-mode-hook()
+    "sass Hook"
+    (setq sass-indent-offset 2))
+
+  (setq js2-highlight-level 3)
+
+  (add-hook 'web-mode-hook 'wm/web-mode-hook)
+  (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
+  (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
+
+  ;; store all backup and autosave files in the tmp dir
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+   
+  (setq make-backup-files nil)
+
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+  (setq ispell-program-name "/usr/local/bin/aspell")
+
+  ;; Let's use projectile globally
+
+  (projectile-global-mode)
+
+  ;; OrgModeSettings
+  ;; (eval-after-load 'org '(require 'setup-orgmode))
+
+  ;; defuns (load all files in defuns-dir)
+  (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+  (dolist (file (directory-files defuns-dir t "\\w+"))
+    (when (file-regular-p file)
+      (load file)))
+
+  ;; Let's edit all text in Emacs please
+  (require 'edit-server)
+  (edit-server-start)
+
+  (server-start)
+
+  (defvar settings-dir)
+  (defvar defuns-dir)
+
+  (setq settings-dir
+        (expand-file-name "settings/" user-emacs-directory))
+
+  ;; set up the settings folder
+  (add-to-list 'load-path settings-dir)
+
+  ;; keep custom settings out of init.el
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+
+  (defun flycheck-list-errors-only-when-errors ()
+    "Open a error list buffer when there are errors to consider."
+    (if flycheck-current-errors
+        (flycheck-list-errors)
+      (-when-let (buffer (get-buffer flycheck-error-list-buffer))
+        (dolist (window (get-buffer-window-list buffer))
+          (quit-window nil window)))))
+
+  ;; (require 'setup-appearance)
+  ;; (require 'setup-package)
+  ;; (require 'setup-smartparens)
+  ;; (require 'setup-emms)
+  ;; (require 'setup-helm)
+  ;; (require 'setup-evil)
+  ;; (require 'setup-erc)
+  ;; (require 'setup-eshell)
+
+  (require 'auto-complete-config)
+
+  (use-package auto-complete
+    :ensure t
+    :config
+      (ac-config-default)
+    )
+
+  ;; Use Emacs terminfo, not system terminfo
+  (setq system-uses-terminfo nil)
+
+
+  (use-package multi-term
+    :ensure t
+    :config
+      (setq multi-term-program "/bin/zsh"))
+
+  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+  (defun set-exec-path-from-shell-PATH ()
+    "Get the shell path from PATH."
+    (let ((path-from-shell (replace-regexp-in-string
+                            "[ \t\n]*$"
+                            ""
+                            (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+      (setenv "PATH" path-from-shell)
+      (setq eshell-path-env path-from-shell)
+      (message "%s" (propertize path-from-shell 'face '(:foreground "red")))
+      (setq exec-path (split-string path-from-shell path-separator))))
+
+  (when (eq (window-system) 'ns) (set-exec-path-from-shell-PATH))
+
+  (add-hook 'term-mode-hook
+      (lambda ()
+        (setq term-buffer-maximum-size 10000)))
+
+  (add-hook 'dired-mode-hook (lambda ()
+                               (dired-hide-details-mode 1)))
+
+  ;; Whitespace
+  (setq-default fill-column 80)
+  (setq-default default-tab-width 2)
+  (setq-default evil-shift-width 2)
+  (setq-default indent-tabs-mode nil)
+
+  (electric-indent-mode 1)
+
+  (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
+  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
+  (defun wm/web-mode-hook()
+    "Web-Mode Hook"
+    (setq web-mode-code-indent-offset 2)
+    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    (setq-local helm-dash-docsets '("react" "javascript")))
+
+  (defun wm/js2-mode-hook()
+    "js2 Hook"
+    (js2-minor-mode 1)
+    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    (setq-local helm-dash-docsets '("react" "javascript")))
+
+  (defun wm/sass-mode-hook()
+    "sass Hook"
+    (setq sass-indent-offset 2))
+
+  (setq js2-highlight-level 3)
+
+  (add-hook 'web-mode-hook 'wm/web-mode-hook)
+  (add-hook 'sass-mode-hook 'wm/sass-mode-hook)
+  (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
+
+  ;; store all backup and autosave files in the tmp dir
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+   
+  (setq make-backup-files nil)
+
+  (use-package rainbow-delimiters
+    :ensure t
+    :config
+      (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
+  ;; TODO: make this standard across environments
+  (setq ispell-program-name "/usr/local/bin/aspell")
+
+  ;; Let's use projectile globally
+  (projectile-global-mode)
+
+  ;; defuns (load all files in defuns-dir)
+  (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
+  (dolist (file (directory-files defuns-dir t "\\w+"))
+    (when (file-regular-p file)
+      (load file)))
+
+  ;; Let's edit all text in Emacs please
+  (use-package edit-server
+    :ensure t) 
+
+  (edit-server-start)
+
+  (server-start)
+
+  ;; Go-Test needs some color when using Ginkgo
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (message "Colorize Happening")
+    (toggle-read-only)
+    (ansi-color-apply-on-region compilation-filter-start (point))
+    (toggle-read-only))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 #+END_SRC
 
