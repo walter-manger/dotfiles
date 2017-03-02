@@ -15,6 +15,7 @@
 .emacs.d/eshell/history
 .emacs.d/games/
 .emacs.d/config.el
+.emacs.d/server
 
 .vim/plugged
 .vim/.netrwhist
