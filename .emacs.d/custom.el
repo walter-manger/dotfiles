@@ -20,7 +20,7 @@
  '(js2-strict-trailing-comma-warning nil)
  '(package-selected-packages
    (quote
-    (solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
+    (cider-mode cider json-mode js-doc solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -32,9 +32,9 @@
  '(mode-line-highlight ((t nil)))
  '(mode-line-inactive ((t (:background "#002b36" :foreground "#586e75" :box (:line-width 1 :color "#002b36" :style unspecified) :overline "#073642" :underline nil))))
  '(org-code ((t (:family "Hack"))))
- '(org-level-1 ((t (:inherit outline-1 :height 1.4))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.3))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.2))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
+ '(org-level-1 ((t (:inherit outline-1 :height 1.04))))
+ '(org-level-2 ((t (:inherit outline-2 :height 1.03))))
+ '(org-level-3 ((t (:inherit outline-3 :height 1.02))))
+ '(org-level-4 ((t (:inherit outline-4 :height 1.01))))
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
  '(org-table ((t (:family "Hack")))))
