@@ -47,7 +47,8 @@ plugins=(git vi-mode zsh-wakatime zsh-completions)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin"
+
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/bin::~/.local/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
