@@ -18,7 +18,7 @@ git config --global user.email "walter.manger@gmail.com"
 mkdir -p ~/go/src/github.com/walter-manger
 
 # get my settings (https for now)
-git clone https://github.com/walter-manger/dotfiles.git ~/src/github.com/walter-manger/dotfiles
+git clone https://github.com/walter-manger/dotfiles.git ~/go/src/github.com/walter-manger/dotfiles
 
 # setup a symlink to some dotfiles 
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.emacs.d ~/.emacs.d

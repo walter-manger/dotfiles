@@ -74,5 +74,5 @@ fi
 if hash zsh 2>/dev/null; then
     echo "zsh already installed, moving on\n" 
 else
-    apt-get install zsh
+    apt-get install zsh -y
 fi
