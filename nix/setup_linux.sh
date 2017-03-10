@@ -7,21 +7,21 @@
 if hash vim 2>/dev/null; then
     echo "vim already installed, moving on\n"
 else 
-  apt-get install vim
+  apt-get install vim -y
 fi
 
 # must have git
 if hash git 2>/dev/null; then
 	echo "git already installed, moving on\n"
 else 
-	apt-get install git
+	apt-get install git -y
 fi
 
 # get xclip to for easier copying of ssh keys
 if hash xclip 2>/dev/null; then
  	echo "xclip already installed, moving on\n"
 else 
-	apt-get install xclip
+	apt-get install xclip -y
 fi   
 
 # build-essential will bring in everything I need to build emacs
@@ -52,7 +52,7 @@ else
 fi
 
 # I like using hack at the moment
-apt-get install fonts-hack-ttf
+apt-get install fonts-hack-ttf -y
 
 # nodejs
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
@@ -62,3 +62,17 @@ sudo apt-get install -y nodejs
 curl https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz -o ~/Downloads/go1.8.linux-amd64.tar.gz
 
 tar -C /usr/local -xzf ~/Downloads/go1.8.linux-amd64.tar.gz
+
+if hash keepass2 2>/dev/null; then
+    echo "keepass2 already installed, moving on\n" 
+else
+  apt-add-repository ppa:jtaylor/keepass -y
+  apt-get update
+  apt-get install keepass2 -y
+fi
+
+if hash zsh 2>/dev/null; then
+    echo "zsh already installed, moving on\n" 
+else
+    apt-get install zsh
+fi
