@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # no need for caps, ever again
 setxkbmap -option ctrl:nocaps
 
@@ -24,6 +26,7 @@ git clone https://github.com/walter-manger/dotfiles.git ~/go/src/github.com/walt
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.emacs.d ~/.emacs.d
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.vimrc ~/.vimrc
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.bashrc ~/.bashrc
+ln -s ~/go/src/github.com/walter-manger/dotfiles/.zshrc ~/.zshrc
 
 # awesome go tools
 go get github.com/rogpeppe/godef

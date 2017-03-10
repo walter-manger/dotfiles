@@ -3,7 +3,7 @@ export ZSH=~/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+ZSH_THEME="bira"
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -43,24 +43,21 @@ DISABLE_UPDATE_PROMPT="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode zsh-wakatime  zsh-completions)
+plugins=(git vi-mode zsh-wakatime zsh-completions)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/bin:/usr/local/share/dotnet:/Library/Frameworks/Mono.framework/Versions/Current/bin/"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:/Applications/Racket\ v6.6/bin
-export pc6=$GOPATH/src/github.com/powerchordinc/platform
-export MONGOLAB_URL=mongodb://sb-public:public@ds031832.mlab.com:31832/slack-battle
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+#export PATH=$PATH:/Applications/Racket\ v6.6/bin
+#export pc6=$GOPATH/src/github.com/powerchordinc/platform
 unsetopt nomatch
 
 alias l='ls -al'
 alias ls='ls -GFh'
 alias pc6='cd $pc6'
-alias pc6work='cd $pc6 && sh build.sh work'
-alias pc6setup='cd $pc6 && sh build.sh setup'
 alias e='emacsclient $1'
 alias schemas='npm run schemas sync -- --trunk $1 --email wmanger@powerchordsystem.com'
 
