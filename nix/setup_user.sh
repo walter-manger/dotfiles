@@ -18,11 +18,10 @@ git clone https://github.com/walter-manger/dotfiles.git ~/go/src/github.com/walt
 
 # setup a symlink to some dotfiles 
 echo "Resetting dotfiles\n"
-rm ~/.emacs.d ~/.vimrc ~/.bashrc ~/.zshrc
+rm ~/.emacs.d ~/.vimrc ~/.bashrc
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.emacs.d ~/.emacs.d
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.vimrc ~/.vimrc
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.bashrc ~/.bashrc
-ln -s ~/go/src/github.com/walter-manger/dotfiles/.zshrc ~/.zshrc
 
 # go is not in the path just yet, let's put it there
 if hash go 2>/dev/null; then
@@ -58,3 +57,6 @@ chsh -s $(which zsh)
 
 # oh my zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+rm ~/.zshrc
+ln -s ~/go/src/github.com/walter-manger/dotfiles/.zshrc ~/.zshrc
