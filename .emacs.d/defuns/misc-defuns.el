@@ -13,7 +13,7 @@ Example: 2010-11-29T23:23:35-08:00"
   (format-time-string "%Y-%m-%d"))
 
 (defun wm/hugo-new ()
-  (concat (file-name-as-directory "~/org/wmanger_blog/content/post")
+  (concat (file-name-as-directory "~/Dropbox/Org/wmanger_blog/content/post")
             (today-is) ".md"))
 
 (defun wm/clip-file ()

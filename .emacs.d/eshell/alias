@@ -1,6 +1,6 @@
 alias scheme ./usr/local/bin/scheme
-alias blog-publish hugo -s="~/org/wmanger_blog"
+alias blog-publish hugo -s="~/Dropbox/Org/wmanger_blog"
 alias blog-browse (browse-url "http://localhost:1313")
-alias blog-serve hugo -s="~/org/wmanger_blog" server
-alias blog-dir cd ~/org/wmanger_blog
+alias blog-serve hugo -s="~/Dropbox/Org/wmanger_blog" server
+alias blog-dir cd ~/Dropbox/Org/wmanger_blog
 alias node NODE_NO_READLINE=1 node
