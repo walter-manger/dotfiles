@@ -3,12 +3,6 @@
 # no need for caps, ever again
 setxkbmap -option ctrl:nocaps
 
-# use zsh (for now) .. Asks for pass
-chsh -s $(which zsh)
-
-# oh my zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
 git config --global user.name "Walter Manger"
 git config --global user.email "walter.manger@gmail.com"
 
@@ -45,3 +39,9 @@ cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 
 # Setup keepass with dropbox
 keepass2
+
+# use zsh (for now) .. Asks for pass
+chsh -s $(which zsh)
+
+# oh my zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
