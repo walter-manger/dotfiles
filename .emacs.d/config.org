@@ -24,7 +24,7 @@
       (message "Hack font not found, go get it"))
 
   (defvar font-size)
-  (setq font-size 110)
+  (setq font-size 109)
 
   (when (> (x-display-pixel-width) 1366)
     (setq font-size 170))
