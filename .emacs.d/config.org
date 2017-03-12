@@ -104,6 +104,15 @@
 
 #+END_SRC
 
+* Web
+
+#+BEGIN_SRC emacs-lisp
+
+  (use-package web-mode
+    :ensure t)
+
+#+END_SRC
+
 * JavaScript
 
 #+BEGIN_SRC emacs-lisp
@@ -564,6 +573,9 @@ http://tromey.com/blog/?p=831
   (diminish 'projectile-mode)
   (diminish 'auto-revert-mode)
   (diminish 'auto-fill-mode)
+  (diminish 'eldoc-mode (string 32 #x24BA))
+  (diminish 'tern-mode (string 32 #x24C9))
+  (diminish 'auto-complete-mode (string 32 #x24B6))
   (diminish 'wakatime-mode (string 32 #x24CC))
   (diminish 'helm-mode)
   (diminish 'buffer-face-mode)
@@ -689,6 +701,8 @@ http://tromey.com/blog/?p=831
 
   (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
   (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
@@ -726,77 +740,17 @@ http://tromey.com/blog/?p=831
 
   (setq ispell-program-name "/usr/local/bin/aspell")
 
-  ;; Let's use projectile globally
-
-  (projectile-global-mode)
-
-  ;; OrgModeSettings
-  ;; (eval-after-load 'org '(require 'setup-orgmode))
-
   ;; defuns (load all files in defuns-dir)
   (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
   (dolist (file (directory-files defuns-dir t "\\w+"))
     (when (file-regular-p file)
       (load file)))
 
-  ;; Let's edit all text in Emacs please
-  (require 'edit-server)
-  (edit-server-start)
-
   (use-package server
     :init
     (if (and (fboundp 'server-running-p) 
             (not (server-running-p)))
         (server-start)))
-
-  (defvar settings-dir)
-  (defvar defuns-dir)
-
-  (setq settings-dir
-        (expand-file-name "settings/" user-emacs-directory))
-
-  ;; set up the settings folder
-  (add-to-list 'load-path settings-dir)
-
-  ;; keep custom settings out of init.el
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (load custom-file)
-
-  (defun flycheck-list-errors-only-when-errors ()
-    "Open a error list buffer when there are errors to consider."
-    (if flycheck-current-errors
-        (flycheck-list-errors)
-      (-when-let (buffer (get-buffer flycheck-error-list-buffer))
-        (dolist (window (get-buffer-window-list buffer))
-          (quit-window nil window)))))
-
-  ;; (require 'setup-appearance)
-  ;; (require 'setup-package)
-  ;; (require 'setup-smartparens)
-  ;; (require 'setup-emms)
-  ;; (require 'setup-helm)
-  ;; (require 'setup-evil)
-  ;; (require 'setup-erc)
-  ;; (require 'setup-eshell)
-
-  (require 'auto-complete-config)
-
-  (use-package auto-complete
-    :ensure t
-    :config
-      (ac-config-default)
-    )
-
-  ;; Use Emacs terminfo, not system terminfo
-  (setq system-uses-terminfo nil)
-
-
-  (use-package multi-term
-    :ensure t
-    :config
-      (setq multi-term-program "/bin/zsh"))
-
-  (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
   (defun set-exec-path-from-shell-PATH ()
     "Get the shell path from PATH."
@@ -826,26 +780,6 @@ http://tromey.com/blog/?p=831
 
   (electric-indent-mode 1)
 
-  (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
-  (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-  (defun wm/web-mode-hook()
-    "Web-Mode Hook"
-    (setq web-mode-code-indent-offset 2)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-    (setq-local helm-dash-docsets '("react" "javascript")))
-
-  (defun wm/js2-mode-hook()
-    "js2 Hook"
-    (js2-minor-mode 1)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-    (setq-local helm-dash-docsets '("react" "javascript")))
-
-  (defun wm/sass-mode-hook()
-    "sass Hook"
-    (setq sass-indent-offset 2))
 
   (setq js2-highlight-level 3)
 
@@ -866,25 +800,12 @@ http://tromey.com/blog/?p=831
     :config
       (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-  ;; TODO: make this standard across environments
-  (setq ispell-program-name "/usr/local/bin/aspell")
-
-  ;; Let's use projectile globally
-  (projectile-global-mode)
-
-  ;; defuns (load all files in defuns-dir)
-  (setq defuns-dir (expand-file-name "defuns" user-emacs-directory))
-  (dolist (file (directory-files defuns-dir t "\\w+"))
-    (when (file-regular-p file)
-      (load file)))
-
   ;; Let's edit all text in Emacs please
   (use-package edit-server
     :ensure t) 
 
   (edit-server-start)
-
-  (server-start)
+  ;;(server-start)
 
   ;; Go-Test needs some color when using Ginkgo
   (require 'ansi-color)

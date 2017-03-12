@@ -3,6 +3,14 @@
 # build-essential will bring in everything I need to build emacs
 apt install build-essential checkinstall
 
+# for tex stuff
+# https://www.tug.org/texlive/debian.html
+if hash texlive 2>/dev/null; then
+    echo "texlive already installed, moving on\n"
+else 
+  apt-get install texlive -y
+fi
+
 if hash emacs 2>/dev/null; then
     echo "emacs already installed, moving on\n" 
 else

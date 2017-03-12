@@ -10,6 +10,9 @@ git config --global user.email "walter.manger@gmail.com"
 #eval "$(ssh-agent -s)"
 #ssh-add ~/.ssh/id_rsa
 
+# aspell needs to be moved...
+# Emacs expects it to be /usr/bin/aspell
+
 # all code goes here
 mkdir -p ~/go/src/github.com/walter-manger
 
@@ -53,10 +56,21 @@ go get github.com/spf13/hugo
 # use zsh (for now) .. Asks for pass
 # TODO: check to see if installed
 
+echo "Changing shell to zsh\n"
 chsh -s $(which zsh)
 
 # oh my zsh
+echo "Installing oh-my-zsh\n"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
+echo "Getting my config for zsh\n"
 rm ~/.zshrc
 ln -s ~/go/src/github.com/walter-manger/dotfiles/.zshrc ~/.zshrc
+
+# Install node tools
+# but fix permissions...
+# https://docs.npmjs.com/getting-started/fixing-npm-permissions - option 2
+
+# tern
+
+# eslint

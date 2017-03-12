@@ -52,3 +52,22 @@ if hash zsh 2>/dev/null; then
 else
     apt-get install zsh -y
 fi
+
+# Terminix is pretty cool
+if hash terminix 2>/dev/null; then
+    echo "terminix already installed, moving on\n" 
+else
+    add-apt-repository ppa:webupd8team/terminix
+    apt-get update
+    apt-get install terminix -y
+fi
+
+if hash aspell 2>/dev/null; then
+  if hash /usr/bin/aspell 2>/dev/null; then
+      echo "aspell is in the correct place, moving on\n"
+  else
+      cp (which aspell) /usr/local/bin/ 
+  fi
+else
+    echo "aspell is not installed, maybe install it?"
+fi
