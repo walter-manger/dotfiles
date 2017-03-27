@@ -48,7 +48,7 @@ plugins=(git vi-mode zsh-wakatime zsh-completions)
 # User configuration
 
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/waltermanger/bin::~/.local/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin:$HOME/.local/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
@@ -101,7 +101,7 @@ export PIP_REQUIRE_VIRTUALENV=true
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # 
 # bindkey -v
-alias tmux="TERM=screen-256color-bce tmux"
+#alias tmux="TERM=screen-256color-bce tmux"
 
 fpath=( ~/.zfunc "${fpath[@]}")
 
