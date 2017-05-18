@@ -103,6 +103,7 @@
       :ensure t
       :config
       (push "GOPATH" exec-path-from-shell-variables)
+      (push "GOROOT" exec-path-from-shell-variables)
       (setq exec-path-from-shell-check-startup-files nil)
       (exec-path-from-shell-initialize))
 
@@ -144,6 +145,7 @@
   (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.scss$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  ;;(add-to-list 'ac-modes 'rjsx-mode)
 
   (defun wm/web-mode-hook()
     "Web-Mode Hook"
@@ -168,22 +170,34 @@
 
 * JavaScript
 
+This all leaves much to be desired. Check out some new packages like
+http://melpa.org/#/indium
+
 #+BEGIN_SRC emacs-lisp
 
   (use-package tern
-    :diminish " T"
-    :init (add-hook 'web-mode-hook 'tern-mode)
+    :config (use-package tern-auto-complete
+              :ensure t
+              :init (tern-ac-setup))
+    :init
+    (add-hook 'web-mode-hook 'tern-mode)
+    (add-hook 'rjsx-mode-hook 'tern-mode)
+    (add-hook 'js2-mode-hook 'tern-mode)
     :ensure t)
 
-  (use-package tern-auto-complete
-    :ensure t)
+  ;;(use-package tern-auto-complete
+  ;;    :ensure t)
+
+
 
 #+END_SRC
 
 * Ediff
 
-#+BEGIN_SRC emacs-lisp
+Look at  abo-abo's flow
+http://oremacs.com/2015/01/17/setting-up-ediff/
 
+#+BEGIN_SRC emacs-lisp
 
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
@@ -218,37 +232,39 @@
 
 #+BEGIN_SRC emacs-lisp
 
-  (use-package helm
-    :ensure t)
+    (use-package helm
+      :ensure t)
 
-  (helm-autoresize-mode 1)
-  (setq helm-display-header-line nil)
-  (setq helm-autoresize-max-height 30)
-  (setq helm-autoresize-min-height 30)
-  (setq helm-split-window-in-side-p t)
+    (helm-autoresize-mode 1)
+    (setq helm-display-header-line nil)
+    (setq helm-autoresize-max-height 30)
+    (setq helm-autoresize-min-height 30)
+    (setq helm-split-window-in-side-p t)
 
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x b") 'helm-mini)
+    (global-set-key (kbd "M-x") 'helm-M-x)
+    (global-set-key (kbd "C-x b") 'helm-mini)
 
-  (setq helm-M-x-fuzzy-match t)
-  (setq helm-buffers-fuzzy-matching t
-        helm-recentf-fuzzy-match    t)
+    (setq helm-M-x-fuzzy-match t)
+    (setq helm-buffers-fuzzy-matching t
+          helm-recentf-fuzzy-match    t)
 
-  (helm-mode 1)
+    (helm-mode 1)
 
-  (projectile-global-mode)
-  (setq projectile-completion-system 'helm)
-  (add-to-list 'projectile-globally-ignored-directories "node_modules")
-  (add-to-list 'projectile-globally-ignored-directories "build/js")
-  (add-to-list 'projectile-globally-ignored-directories "docs/dash")
-  (add-to-list 'projectile-globally-ignored-directories "vendor")
-  (helm-projectile-on)
+    (projectile-global-mode)
+    (setq projectile-completion-system 'helm)
+    (add-to-list 'projectile-globally-ignored-directories "node_modules")
+    (add-to-list 'projectile-globally-ignored-directories "build/js")
+    (add-to-list 'projectile-globally-ignored-directories "docs/dash")
+    (add-to-list 'projectile-globally-ignored-directories "vendor")
+    (helm-projectile-on)
 
-  (use-package helm-ag
-    :ensure t)
+    (use-package helm-ag
+      :ensure t)
 
-  (use-package swiper-helm
-    :ensure t)
+    (use-package swiper-helm
+      :ensure t
+      :bind (("C-s" . swiper-helm)
+              ("C-r" . swiper-helm)))
 
 #+END_SRC
 
@@ -307,115 +323,123 @@
 
 * Orgmode
 
+What about a work journal
+https://iloveemacs.wordpress.com/2014/09/08/encrypted-work-diary/
+GPG -- Didn't know about that
+
 #+BEGIN_SRC emacs-lisp
 
-  (use-package org
-    :ensure t
-    :bind 
-    (("C-c c" . org-capture)
-     ("C-c a" . org-agenda)
-     ("C-c l" . org-store-link)))
+    (use-package org
+      :ensure t
+      :bind 
+      (("C-c c" . org-capture)
+       ("C-c a" . org-agenda)
+       ("C-c l" . org-store-link)))
 
-  (global-set-key (kbd "C-c n")
-                  (lambda ()
-                    (interactive)
-                    (find-file "~/Dropbox/Org/notes.org")))
+    (global-set-key (kbd "C-c n")
+                    (lambda ()
+                      (interactive)
+                      (find-file "~/Dropbox/Org/notes.org")))
 
-  (global-set-key (kbd "C-c w")
-                  (lambda ()
-                    (interactive)
-                    (find-file "~/Dropbox/Org/work.org")))
+    (global-set-key (kbd "C-c w")
+                    (lambda ()
+                      (interactive)
+                      (find-file "~/Dropbox/Org/work.org")))
 
 
-  ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+    ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
-  (custom-set-faces
-   '(org-level-1 ((t (:inherit outline-1 :height 1.04))))
-   '(org-level-2 ((t (:inherit outline-2 :height 1.03))))
-   '(org-level-3 ((t (:inherit outline-3 :height 1.02))))
-   '(org-level-4 ((t (:inherit outline-4 :height 1.01))))
-   '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
-   '(org-code ((t (:family "Hack"))))
-   '(org-table ((t (:family "Hack"))))
-   )
+    (custom-set-faces
+     ;;'(org-level-1 ((t (:inherit outline-1 :height 1))))
+     ;;'(org-level-2 ((t (:inherit outline-2 :height 1))))
+     ;;'(org-level-3 ((t (:inherit outline-3 :height 1))))
+     ;;'(org-level-4 ((t (:inherit outline-4 :height 1))))
+     ;;'(org-level-5 ((t (:inherit outline-5 :height 1))))
+     '(org-code ((t (:family "Hack"))))
+     '(org-table ((t (:family "Hack"))))
+     )
 
-  ;; How about trying out publishing to see if I can
-  ;; replace the need for a blog engine
+    ;; How about trying out publishing to see if I can
+    ;; replace the need for a blog engine
 
-  (use-package org-bullets
-    :diminish org-bullets-mode
-    :ensure t
-    :defer t)
+    (use-package ob-go
+      :ensure t)
 
-  (defvar org-work-file)
-  (setq org-work-file "~/Dropbox/Org/work.org")
+    (use-package org-bullets
+      :diminish org-bullets-mode
+      :ensure t
+      :defer t)
 
-  (setq org-log-done t)
+    (defvar org-work-file)
+    (setq org-work-file "~/Dropbox/Org/work.org")
 
-  (setq org-default-notes-file "~/Dropbox/org/notes.org")
+    (setq org-log-done t)
 
-  (setq org-agenda-files (list "~/Dropbox/org/notes.org"
-                               "~/Dropbox/org/blog.org"
-                               "~/Dropbox/org/work.org"))
+    (setq org-default-notes-file "~/Dropbox/org/notes.org")
 
-  (setq org-archive-location (concat org-directory "/notes-archive"))
+    (setq org-agenda-files (list "~/Dropbox/org/notes.org"
+                                 "~/Dropbox/org/blog.org"
+                                 "~/Dropbox/org/work.org"))
 
-  ;; fontify code in code blocks
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
+    (setq org-archive-location (concat org-directory "/notes-archive"))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((sh         . t)
-     (js         . t)
-     (emacs-lisp . t)
-     (clojure    . t)
-     (python     . t)
-     (C          . t)
-     (dot        . t)
-     (scheme        . t)
-     (css        . t)))
+    ;; fontify code in code blocks
+    (setq org-src-fontify-natively t)
+    (setq org-src-tab-acts-natively t)
 
-  ;; use org-bullets in org-mode
-  (add-hook 'org-mode-hook (lambda ()
-                             (org-bullets-mode 1)
-                             (variable-pitch-mode t)
-                             ))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((sh         . t)
+       (js         . t)
+       (emacs-lisp . t)
+       (clojure    . t)
+       (python     . t)
+       (C          . t)
+       (dot        . t)
+       (scheme     . t)
+       (css        . t)
+       (go        . t)))
 
-  (defvar org-capture-templates)
-  (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
-           "* TODO %?" :prepend t)
-          ("n" "Note" entry (file+headline org-default-notes-file "Notes")
-           "* %?")
-          ("b" "Blog Idea" entry (file+headline org-default-notes-file "Blog Ideas")
-           "* %?")
-          ("z" "Work Task" entry (file+headline org-work-file "Work Tasks")
-           "* TODO %?" :prepend t)
-          ("l" "Listen" entry (file+headline org-default-notes-file "Listen")
-           "* %?")
-          ("r" "Read" entry (file+headline org-default-notes-file "Read")
-           "* %?")
-          ("w" "Watch" entry (file+headline org-default-notes-file "Watch")
-           "* %?")
-          ("W" "Work Note" entry (file+headline org-work-file "Work Notes")
-           "* %?")
-          ("p" "Post" plain (file (wm/hugo-new))
-           (file "~/.emacs.d/org-templates/blogpost.orgcaptmpl"))
-          ))
+    ;; use org-bullets in org-mode
+    (add-hook 'org-mode-hook (lambda ()
+                               (org-bullets-mode 1)
+                               (variable-pitch-mode t)
+                               ))
 
-  (setq org-columns-default-format
-        "%25ITEM %TODO %3PRIORITY %10CLOCKSUM(Total Time) %CLOCKSUM_T(Time Today)")
+    (defvar org-capture-templates)
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
+             "* TODO %?" :prepend t)
+            ("n" "Note" entry (file+headline org-default-notes-file "Notes")
+             "* %?")
+            ("b" "Blog Idea" entry (file+headline org-default-notes-file "Blog Ideas")
+             "* %?")
+            ("z" "Work Task" entry (file+headline org-work-file "Work Tasks")
+             "* TODO %?" :prepend t)
+            ("l" "Listen" entry (file+headline org-default-notes-file "Listen")
+             "* %?")
+            ("r" "Read" entry (file+headline org-default-notes-file "Read")
+             "* %?")
+            ("w" "Watch" entry (file+headline org-default-notes-file "Watch")
+             "* %?")
+            ("W" "Work Note" entry (file+headline org-work-file "Work Notes")
+             "* %?")
+            ("p" "Post" plain (file (wm/hugo-new))
+             (file "~/.emacs.d/org-templates/blogpost.orgcaptmpl"))
+            ))
 
-  ;; Not really using this anymore, but perhaps I should?
-  (use-package harvest
-    :ensure t)
+    (setq org-columns-default-format
+          "%25ITEM %TODO %3PRIORITY %10CLOCKSUM(Total Time) %CLOCKSUM_T(Time Today)")
 
-  (require 'harvest)
-  ;; (add-hook 'org-clock-in-hook 'harvest)
-  ;; (add-hook 'org-clock-out-hook 'harvest-clock-out)
+    ;; Not really using this anymore, but perhaps I should?
+    (use-package harvest
+      :ensure t)
 
-  (setq org-return-follows-link t)
+    (require 'harvest)
+    ;; (add-hook 'org-clock-in-hook 'harvest)
+    ;; (add-hook 'org-clock-out-hook 'harvest-clock-out)
+
+    (setq org-return-follows-link t)
 
 
 #+END_SRC
@@ -589,9 +613,12 @@
   This guy's config too:
   http://www.tomcraven.io/post/my-go-development-environment/
 
+  Go Meta Linter seems cool:
+  https://github.com/alecthomas/gometalinter
+
 #+BEGIN_SRC emacs-lisp
   ;; I do need this for now
-  ;;(setenv "GOPATH" "$HOME/go")
+  ;;(setenv "GOPATH" "/Users/waltermanger/go")
 
    (use-package go-mode
     :ensure t 
@@ -605,6 +632,7 @@
                   ;; (setq gofmt-command "goimports")
                   (add-hook 'before-save-hook 'gofmt-before-save)
                   (setq-local helm-dash-docsets '("Go"))
+                  (push 'ac-source-yasnippet ac-sources)
                   (setq go-play-browse-function 'browse-url))
   ))
 
@@ -711,7 +739,12 @@ http://tromey.com/blog/?p=831
   (use-package auto-complete
     :ensure t
     :config
-      (ac-config-default)
+    ;;(setq ac-dwim t)
+    (ac-config-default)
+    ;;(setq ac-sources '(ac-source-yasnippet
+    ;;                   ac-source-abbrev
+    ;;                   ac-source-words-in-same-mode-buffers))
+      (add-to-list 'ac-modes 'rjsx-mode)
     )
 
   ;; Use Emacs terminfo, not system terminfo
@@ -824,3 +857,43 @@ http://tromey.com/blog/?p=831
     :ensure t)
 
 #+END_SRC
+* Org Tree Slide
+
+#+BEGIN_SRC emacs-lisp
+
+
+  (use-package org-tree-slide
+    :ensure t
+  ;;  :bind (("<f8>" . org-tree-slide-mode)
+   ;;         ("S-<f8>" . org-tree-slide-skip-done)
+    ;;        ("<f9>" . org-tree-slide-move-next-tree)
+     ;;       ("S-<f9>" . org-tree-slide-move-previous-tree))
+    :init (org-tree-slide-simple-profile))
+
+#+END_SRC
+* Org Present
+
+#+BEGIN_SRC emacs-lisp
+
+    (use-package org-present
+      :ensure t
+      :defer t
+      :bind (("<f8>" . org-present)
+             ("S-<f8>" . org-present-quit)
+             ("<f9>" . org-present-next)
+             ("S-<f9>" . org-present-prev))
+      :init
+      (add-hook 'org-present-mode-hook
+                (lambda ()
+                  (org-present-big)
+                  (org-display-inline-images)
+                  (org-present-hide-cursor)
+                  (org-present-read-only)))
+      (add-hook 'org-present-mode-quit-hook
+                (lambda ()
+                  (org-present-small)
+                  (org-remove-inline-images)
+                  (org-present-show-cursor)
+                  (org-present-read-write))))
+
+#+END_SRC 

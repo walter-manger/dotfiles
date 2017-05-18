@@ -47,19 +47,20 @@ plugins=(git vi-mode zsh-wakatime zsh-completions)
 
 # User configuration
 
-
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin:$HOME/.local/bin"
-# export MANPATH="/usr/local/man:$MANPATH"
 export GOPATH=$HOME/go
+export GOROOT=/usr/local/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-#export PATH=$PATH:/Applications/Racket\ v6.6/bin
-#export pc6=$GOPATH/src/github.com/powerchordinc/platform
+
+export PATH=$PATH:$HOME/bin/protoc-3.2.0-osx-x86_64/bin
+export pc6=$GOPATH/src/github.com/powerchordinc/platform
 unsetopt nomatch
 
 alias l='ls -al'
 alias ls='ls -GFh'
 alias pc6='cd $pc6'
 alias e='emacsclient $1'
+alias emacs='emacsclient $1'
 alias schemas='npm run schemas sync -- --trunk $1 --email wmanger@powerchordsystem.com'
 
 export NVM_DIR="$HOME/.nvm"
@@ -106,3 +107,9 @@ export PIP_REQUIRE_VIRTUALENV=true
 fpath=( ~/.zfunc "${fpath[@]}")
 
 source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/waltermanger/bin/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/waltermanger/bin/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/waltermanger/bin/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/waltermanger/bin/google-cloud-sdk/completion.zsh.inc'; fi

@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: UniversalDebug
+# key: ud
+# binding: direct-keybinding
+# --
+fmt.Println("***********> $1")
+$0
