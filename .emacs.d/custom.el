@@ -18,9 +18,10 @@
  '(js2-mode-show-parse-errors nil)
  '(js2-mode-show-strict-warnings nil)
  '(js2-strict-trailing-comma-warning nil)
+ '(org-export-backends (quote (ascii html icalendar latex md)))
  '(package-selected-packages
    (quote
-    (rjsx-mode exec-path-from-shell web gorepl-mode cider-mode cider json-mode js-doc solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
+    (org-present ob-go org-tree-slide demo-it protobuf-mode sos sx rjsx-mode exec-path-from-shell web gorepl-mode cider-mode cider json-mode js-doc solarized-theme babel-repl jade tern-auto-complete tern go-guru yasnippet yaml-mode which-key web-mode wakatime-mode w3m use-package twittering-mode try swiper-helm spaceline smartparens smart-mode-line-powerline-theme sass-mode restclient rainbow-delimiters racket-mode paredit org-journal org-bullets multi-term markdown-mode magit-filenotify helm-projectile helm-dash helm-ag harvest gotest go-eldoc go-autocomplete git-gutter flycheck evil-surround evil-magit emms edit-server company color-theme-solarized color-theme-sanityinc-solarized ac-js2)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

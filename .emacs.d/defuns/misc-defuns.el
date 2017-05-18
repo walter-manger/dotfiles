@@ -28,3 +28,10 @@ Example: 2010-11-29T23:23:35-08:00"
                     (buffer-file-name))))
     (when filename
       (x-select-text filename))))
+
+(defun wm/kill-other-buffers ()
+    "Kill all other buffers -- but not dired, scratch, or shells."
+    (interactive)
+    (mapc 'kill-buffer 
+          (delq (current-buffer) 
+                (remove-if-not 'buffer-file-name (buffer-list)))))
