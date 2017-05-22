@@ -73,6 +73,25 @@
   (load-theme 'solarized-dark t)
 
 #+END_SRC
+
+* Yasnippet
+  
+#+BEGIN_SRC emacs-lisp
+
+  ;; TODO: Make repos standard across environments
+  (use-package yasnippet
+    :ensure t
+    :config
+    (progn 
+      (setq yas-snippet-dirs
+            '("~/.emacs.d/snippets"                 ;; personal snippets
+              "~/repos/yasnippet-snippets"          ;; the default collection
+      ))
+      (yas-global-mode 1)
+      )
+  )
+
+#+END_SRC
   
 * Try 
 
@@ -275,25 +294,6 @@ http://oremacs.com/2015/01/17/setting-up-ediff/
   (setq geiser-default-implementation 'scheme)
 #+END_SRC
 
-* Yasnippet
-  
-#+BEGIN_SRC emacs-lisp
-
-  ;; TODO: Make repos standard across environments
-  (use-package yasnippet
-    :ensure t
-    :config
-    (progn 
-      (setq yas-snippet-dirs
-            '("~/.emacs.d/snippets"                 ;; personal snippets
-              "~/repos/yasnippet-snippets"          ;; the default collection
-      ))
-      (yas-global-mode 1)
-      )
-  )
-
-#+END_SRC
-
 * Flycheck
 
 #+BEGIN_SRC emacs-lisp
@@ -426,6 +426,8 @@ GPG -- Didn't know about that
              "* %?")
             ("p" "Post" plain (file (wm/hugo-new))
              (file "~/.emacs.d/org-templates/blogpost.orgcaptmpl"))
+            ("s" "Staff Meeting" entry  (file (wm/staff-meeting))
+             (file "~/.emacs.d/org-templates/staff_meeting.orgcaptmpl"))
             ))
 
     (setq org-columns-default-format
@@ -717,6 +719,20 @@ http://tromey.com/blog/?p=831
 
 #+END_SRC
  
+* Markdown
+
+#+BEGIN_SRC emacs-lisp
+
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+#+END_SRC
+
 * REST
   
 #+BEGIN_SRC emacs-lisp
