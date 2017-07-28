@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: blog
+# key: blog
+# binding: direct-keybinding
+# --
+#+TITLE: $1
+#+AUTHOR: Walter Manger
+#+EMAIL: walter.manger@gmail.com
+#+DATE: `(format-time-string "<%Y-%m-%d %a>")`
+#+STARTUP: showall
+#+STARTUP: inlineimages
+
+$0

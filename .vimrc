@@ -25,6 +25,8 @@ set shiftwidth=2
 set expandtab
 " set hidden
 
+set clipboard=unnamed
+
 syntax on
 let mapleader=","
 " Plugins

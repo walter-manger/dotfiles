@@ -575,10 +575,10 @@ GPG -- Didn't know about that
 
 #+BEGIN_SRC emacs-lisp
 
-  (setq wakatime-api-key "33c08473-7680-4203-b97d-64120cd743c1")
-  (setq wakatime-cli-path "/usr/local/bin/wakatime")
+  ;;(setq wakatime-api-key "33c08473-7680-4203-b97d-64120cd743c1")
+  ;;(setq wakatime-cli-path "/usr/local/bin/wakatime")
 
-  (when (eq (window-system) 'ns) (global-wakatime-mode))
+  ;;(when (eq (window-system) 'ns) (global-wakatime-mode))
 
 #+END_SRC
 
@@ -926,5 +926,166 @@ http://tromey.com/blog/?p=831
              "/usr/bin/open"
              (list "-a" "firefox" url))))
   (setq flymd-browser-open-function 'my-flymd-browser-function)
+
+#+END_SRC
+
+* Blog
+
+#+BEGIN_SRC emacs-lisp
+        ;;(use-package ox-html
+        ;;  :ensure t)
+
+        ;;(use-package ox-rss
+        ;;  :ensure t)
+
+        (use-package htmlize
+          :ensure t)
+
+        (setq org-export-html-coding-system 'utf-8-unix)
+        (setq org-html-viewport nil)
+
+        (setq blog-extra-head
+              (concat
+                      "<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>"
+                      "<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700' rel='stylesheet' type='text/css'>"
+                      "<link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400i,700' rel='text/css'>"
+                      "<link href='https://fonts.googleapis.com/css?family=Open+Sans:600,700,700i' rel='text/css'>"
+                      "<link href='../static/css/code.css' rel='stylesheet' type='text/css' />"
+                      "<meta name='viewport' content='width=device-width, initial-scale=1' />"))
+
+        (setq blog-header-file "~/Dropbox/Org/blog/src/header.html")
+        (defun blog-header (arg)
+          (with-temp-buffer
+            (insert-file-contents blog-header-file)
+            (buffer-string)))
+
+        (setq blog-footer-file "~/Dropbox/Org/blog/src/footer.html")
+        (defun blog-footer (arg)
+          (with-temp-buffer
+            (insert-file-contents blog-footer-file)
+            (buffer-string)))
+
+        (defun generate-sitemap (project &optional sitemap-filename)
+          "Generate the sitemap for my blog."
+          (let* ((project-plist (cdr project))
+                 (dir (file-name-as-directory
+                       (plist-get project-plist :base-directory)))
+                 (localdir (file-name-directory dir))
+                 (exclude-regexp (plist-get project-plist :exclude))
+                 (files (nreverse
+                         (org-publish-get-base-files project exclude-regexp)))
+                 (sitemap-filename (concat dir (or sitemap-filename "sitemap.org")))
+                 (sitemap-sans-extension
+                  (plist-get project-plist :sitemap-sans-extension))
+                 (visiting (find-buffer-visiting sitemap-filename))
+                 file sitemap-buffer)
+            (with-current-buffer
+                (let ((org-inhibit-startup t))
+                  (setq sitemap-buffer
+                        (or visiting (find-file sitemap-filename))))
+              (erase-buffer)
+              ;; loop through all of the files in the project
+              (while (setq file (pop files))
+                (let ((fn (file-name-nondirectory file))
+                      (link
+                       (file-relative-name file (file-name-as-directory
+                                                 (expand-file-name (concat (file-name-as-directory dir) "..")))))
+                      (oldlocal localdir))
+                  (when sitemap-sans-extension
+                    (setq link (file-name-sans-extension link)))
+
+                  (unless (equal (file-truename sitemap-filename)
+                                 (file-truename file))
+                    (let (
+                          (title (org-publish-format-file-entry "%t" file project-plist))
+                          (date (org-publish-format-file-entry "%d" file project-plist))
+                          ;; get the preview section from the current file
+                          (regexp "\\(.*\\)\\[\\([^][]+\\)\\]\\(.*\\)"))
+
+
+                      (cond ((string-match-p regexp title)
+                       (string-match regexp title))
+
+                      (t (insert (concat "+ " date " [[file:" link "][" title "]]\n"))))
+              ))))
+
+              (save-buffer))
+            (or visiting (kill-buffer sitemap-buffer))))
+
+        (setq org-publish-use-timestamps-flag nil)
+
+  (defun articles-postprocessor (project-plist)
+      "Move the index.html file up one directory"
+
+      (let* (
+             (old-sitemap-file (concat
+        (plist-get project-plist :publishing-directory)
+        (file-name-sans-extension (plist-get project-plist :sitemap-filename))
+        ".html"))
+             (new-sitemap-file (replace-regexp-in-string "posts\/" "" old-sitemap-file))
+             )
+
+        (with-temp-buffer
+          (goto-char (point-min))
+          (insert-file-contents old-sitemap-file)
+
+          (goto-char (point-min))
+          (while (search-forward "../static/" nil t)
+            (replace-match "static/"))
+
+          (goto-char (point-min))
+          (while (search-forward "../index.html" nil t)
+            (replace-match "index.html"))
+
+          (write-file new-sitemap-file))))
+
+        (setq org-publish-project-alist
+              `(("blog"
+                 :components ("blog-articles", "blog-static"))
+
+                ("blog-articles"
+                  :base-directory "~/Dropbox/Org/blog/src/posts/"
+                  :base-extension "org"
+                  :publishing-directory "~/Dropbox/Org/blog/public/posts/"
+                  :recursive t
+                  :publishing-function org-html-publish-to-html
+                  :preparation-function nil
+                  :export-with-tags nil
+                  :headline-levels 4
+                  :auto-preamble t
+                  :auto-postamble nil
+                  :completion-function articles-postprocessor
+                  :auto-sitemap t
+                  :sitemap-sans-extension nil
+                  :sitemap-title "Posts"
+                  :sitemap-filename "index.org"
+                  :sitemap-date-format "%m/%d/%Y"
+                  :sitemap-sort-files anti-chronologically
+                  :sitemap-function generate-sitemap
+
+                  :section-numbers nil
+                  :with-toc nil
+                  :with-date t
+                  :with-author nil
+                  :with-creator nil
+                  :with-tags nil
+                  :with-smart-quotes t
+                  :html-doctype "html5"
+                  :html-html5-fancy t
+                  :html-preamble blog-header
+                  :html-postamble blog-footer
+                  :html-head nil
+                  :html-head-extra ,blog-extra-head
+                  :html-head-include-default-style nil
+                )
+
+                ("blog-static"
+                 :base-directory "~/Dropbox/Org/blog/src/static/"
+                 :base-extension ".*"
+                 :publishing-directory "~/Dropbox/Org/blog/public/static/"
+                 :publishing-function org-publish-attachment
+                 :recursive t)
+
+                ))
 
 #+END_SRC

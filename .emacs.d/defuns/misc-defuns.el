@@ -18,7 +18,7 @@ Example: 2010-11-29T23:23:35-08:00"
 
 (defun wm/staff-meeting ()
   (concat (file-name-as-directory "~/Dropbox/Org/work/staff_meetings")
-            (today-is) ".org")
+            (today-is) ".org"))
 
 (defun wm/clip-file ()
   "Put the current file name on the clipboard"

@@ -43,7 +43,7 @@ DISABLE_UPDATE_PROMPT="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode zsh-wakatime zsh-completions)
+plugins=(git vi-mode zsh-wakatime zsh-completions kubectl)
 
 # User configuration
 
@@ -62,6 +62,12 @@ alias pc6='cd $pc6'
 alias e='emacsclient $1'
 alias emacs='emacsclient $1'
 alias schemas='npm run schemas sync -- --trunk $1 --email wmanger@powerchordsystem.com'
+alias kp='kubectl get pods'
+alias kl='kubectl logs $1'
+alias ks='kubectl scale $1 --replicas=0 && kubectl scale $1 --replicas=1'
+alias ke='kubectl exec $1 -it "/bin/bash"'
+alias killmc='minikube delete || true && rm -rf ~/.minikube'
+
 
 export NVM_DIR="$HOME/.nvm"
    . "$(brew --prefix nvm)/nvm.sh"
