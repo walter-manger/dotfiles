@@ -27,3 +27,4 @@
 .emacs.d/backups/**/*
 .emacs.d/auto-save-list/
 *.DS_Store
+/.emacs.d/network-security.data

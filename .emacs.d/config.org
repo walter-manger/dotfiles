@@ -653,13 +653,18 @@ GPG -- Didn't know about that
 #+END_SRC
 
 * Diminish
-  
+ 
+
+ 
 Unicodes
 https://unicode-table.com/en/#miscellaneous-technical
 
 http://tromey.com/blog/?p=831
 
 #+BEGIN_SRC emacs-lisp
+
+(use-package diminish
+   :ensure t)
 
   (diminish 'undo-tree-mode)
   (diminish 'yas-minor-mode)
@@ -766,9 +771,10 @@ http://tromey.com/blog/?p=831
   ;; Use Emacs terminfo, not system terminfo
   (setq system-uses-terminfo nil)
 
-  (use-package multi-term
-    :config
-    (setq multi-term-program "/bin/zsh"))
+  ;;(tuse-package multi-term
+  ;;  :ensure nil
+  ;;  :config
+  ;;  (setq multi-term-program "/bin/zsh"))
 
   (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
@@ -889,7 +895,7 @@ http://tromey.com/blog/?p=831
 #+BEGIN_SRC emacs-lisp
 
     (use-package org-present
-      :ensure t
+      :ensure nil
       :defer t
       :bind (("<f8>" . org-present)
              ("S-<f8>" . org-present-quit)
