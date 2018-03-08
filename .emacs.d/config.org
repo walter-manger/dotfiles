@@ -27,7 +27,7 @@
   (setq font-size 109)
 
   (when (> (x-display-pixel-width) 1366)
-    (setq font-size 170))
+    (setq font-size 200))
 
   (set-face-attribute 'default nil :height font-size)
   (set-face-attribute 'fixed-pitch nil :height font-size)
@@ -158,9 +158,12 @@
   (use-package rjsx-mode
     :ensure t)
 
+  (use-package tide
+    :ensure t)
+
   (add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
   (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
-  (add-to-list 'auto-mode-alist '("\\.ts$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
   (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.scss$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
@@ -182,8 +185,21 @@
 
   (setq js2-highlight-level 3)
 
+  (defun wm/typescript-mode-hook()
+    "Tide Hook"
+    (message "Running TS Mode Hook")
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    (setq-local helm-dash-docsets '("typescript" "javascript")))
+
+  (setq company-tooltip-align-annotations t)
+
   (add-hook 'web-mode-hook 'wm/web-mode-hook)
   (add-hook 'js2-mode-hook 'wm/js2-mode-hook)
+  (add-hook 'typescript-mode-hook 'wm/typescript-mode-hook)
 
 #+END_SRC
 
@@ -240,6 +256,7 @@ http://oremacs.com/2015/01/17/setting-up-ediff/
 
   (use-package spaceline-config
     :ensure spaceline
+    :disabled t
     :config
     (spaceline-spacemacs-theme)
     (spaceline-helm-mode)
@@ -339,12 +356,12 @@ GPG -- Didn't know about that
     (global-set-key (kbd "C-c n")
                     (lambda ()
                       (interactive)
-                      (find-file "~/Dropbox/Org/notes.org")))
+                      (find-file "~/Dropbox/Org/organizer/notes.org")))
 
     (global-set-key (kbd "C-c w")
                     (lambda ()
                       (interactive)
-                      (find-file "~/Dropbox/Org/work.org")))
+                      (find-file "~/Dropbox/Org/organizer/work.org")))
 
 
     ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
@@ -1093,5 +1110,19 @@ http://tromey.com/blog/?p=831
                  :recursive t)
 
                 ))
+
+#+END_SRC
+* Python
+
+https://smythp.com/emacs/python/2016/04/27/pyenv-elpy.html
+https://alysivji.github.io/setting-up-pyenv-virtualenvwrapper.html
+
+#+BEGIN_SRC emacs-lisp
+
+    (use-package pyenv-mode
+      :ensure t)
+
+    (use-package elpy
+      :ensure t)
 
 #+END_SRC
