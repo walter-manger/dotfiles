@@ -19,15 +19,19 @@
   (setq visible-bell nil)
   (setq ring-bell-function 'ignore)
 
-  (if (member "Hack" (font-family-list))
-      (set-default-font "Hack")
-      (message "Hack font not found, go get it"))
+  (if (member "Fira Code" (font-family-list))
+      (set-frame-font "Fira Code")
+      (message "Fira Code font not found, go get it"))
+
+  ;; (if (member "Hack" (font-family-list))
+  ;;     (set-default-font "Hack")
+  ;;     (message "Hack font not found, go get it"))
 
   (defvar font-size)
   (setq font-size 109)
 
   (when (> (x-display-pixel-width) 1366)
-    (setq font-size 200))
+    (setq font-size 170))
 
   (set-face-attribute 'default nil :height font-size)
   (set-face-attribute 'fixed-pitch nil :height font-size)
@@ -78,18 +82,21 @@
   
 #+BEGIN_SRC emacs-lisp
 
-  ;; TODO: Make repos standard across environments
   (use-package yasnippet
     :ensure t
     :config
     (progn 
       (setq yas-snippet-dirs
-            '("~/.emacs.d/snippets"                 ;; personal snippets
-              "~/repos/yasnippet-snippets"          ;; the default collection
+            '(
+              "~/.emacs.d/snippets"                 ;; personal snippets
       ))
       (yas-global-mode 1)
       )
   )
+
+  (use-package yasnippet-snippets
+    :ensure t
+    :defer t)
 
 #+END_SRC
   
@@ -124,6 +131,8 @@
       (push "GOPATH" exec-path-from-shell-variables)
       (push "GOROOT" exec-path-from-shell-variables)
       (setq exec-path-from-shell-check-startup-files nil)
+      (exec-path-from-shell-copy-env "SSH_AGENT_PID")
+      (exec-path-from-shell-copy-env "SSH_AUTH_SOCK")
       (exec-path-from-shell-initialize))
 
     ;; Mac specific
@@ -171,16 +180,16 @@
 
   (defun wm/web-mode-hook()
     "Web-Mode Hook"
-    (setq web-mode-code-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-markup-indent-offset 2)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
-    (setq-local helm-dash-docsets '("react" "javascript")))
+    ;;(setq web-mode-code-indent-offset 2)
+    ;;(setq web-mode-css-indent-offset 2)
+    ;;(setq web-mode-markup-indent-offset 2)
+    ;;(add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    (setq-local helm-dash-docsets '("react" "javascript", "angular")))
 
   (defun wm/js2-mode-hook()
     "js2 Hook"
     (js2-minor-mode 1)
-    (add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
+    ;;(add-hook 'before-save-hook #'flycheck-list-errors-only-when-errors)
     (setq-local helm-dash-docsets '("react" "javascript")))
 
   (setq js2-highlight-level 3)
@@ -193,6 +202,7 @@
     (setq flycheck-check-syntax-automatically '(save mode-enabled))
     (eldoc-mode +1)
     (tide-hl-identifier-mode +1)
+    (company-mode +1)
     (setq-local helm-dash-docsets '("typescript" "javascript")))
 
   (setq company-tooltip-align-annotations t)
@@ -223,7 +233,11 @@ http://melpa.org/#/indium
   ;;(use-package tern-auto-complete
   ;;    :ensure t)
 
-
+  (use-package prettier-js
+    :ensure t
+    :init
+    (add-hook 'js2-mode-hook 'prettier-js-mode)
+    (add-hook 'typescript-mode-hook 'prettier-js-mode))
 
 #+END_SRC
 
@@ -346,120 +360,149 @@ GPG -- Didn't know about that
 
 #+BEGIN_SRC emacs-lisp
 
-    (use-package org
-      :ensure t
-      :bind 
-      (("C-c c" . org-capture)
-       ("C-c a" . org-agenda)
-       ("C-c l" . org-store-link)))
+  (use-package org
+    :ensure t
+    :bind 
+    (("C-c c" . org-capture)
+     ("C-c a" . org-agenda)
+     ("C-c l" . org-store-link)))
 
-    (global-set-key (kbd "C-c n")
-                    (lambda ()
-                      (interactive)
-                      (find-file "~/Dropbox/Org/organizer/notes.org")))
+  (global-set-key (kbd "C-c n")
+                  (lambda ()
+                    (interactive)
+                    (find-file "~/Dropbox/Org/organizer/notes.org")))
 
-    (global-set-key (kbd "C-c w")
-                    (lambda ()
-                      (interactive)
-                      (find-file "~/Dropbox/Org/organizer/work.org")))
+  (global-set-key (kbd "C-c w")
+                  (lambda ()
+                    (interactive)
+                    (find-file "~/Dropbox/Org/organizer/work.org")))
 
 
-    ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+  ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
-    (custom-set-faces
-     ;;'(org-level-1 ((t (:inherit outline-1 :height 1))))
-     ;;'(org-level-2 ((t (:inherit outline-2 :height 1))))
-     ;;'(org-level-3 ((t (:inherit outline-3 :height 1))))
-     ;;'(org-level-4 ((t (:inherit outline-4 :height 1))))
-     ;;'(org-level-5 ((t (:inherit outline-5 :height 1))))
-     '(org-code ((t (:family "Hack"))))
-     '(org-table ((t (:family "Hack"))))
-     )
+  (custom-set-faces
+   ;;'(org-level-1 ((t (:inherit outline-1 :height 1))))
+   ;;'(org-level-2 ((t (:inherit outline-2 :height 1))))
+   ;;'(org-level-3 ((t (:inherit outline-3 :height 1))))
+   ;;'(org-level-4 ((t (:inherit outline-4 :height 1))))
+   ;;'(org-level-5 ((t (:inherit outline-5 :height 1))))
+   '(org-code ((t (:family "Hack"))))
+   '(org-table ((t (:family "Hack"))))
+   )
 
-    ;; How about trying out publishing to see if I can
-    ;; replace the need for a blog engine
+  ;; How about trying out publishing to see if I can
+  ;; replace the need for a blog engine
 
-    (use-package ob-go
-      :ensure t)
+  (use-package ob-go
+    :ensure t)
 
-    (use-package org-bullets
-      :diminish org-bullets-mode
-      :ensure t
-      :defer t)
+  (use-package org-bullets
+    :diminish org-bullets-mode
+    :ensure t
+    :defer t)
 
-    (defvar org-work-file)
-    (setq org-work-file "~/Dropbox/Org/work.org")
+  (defvar org-work-file)
+  (setq org-work-file "~/Dropbox/Org/organizer/work.org")
 
-    (setq org-log-done t)
+  (setq org-log-done t)
 
-    (setq org-default-notes-file "~/Dropbox/org/notes.org")
+  (setq org-default-notes-file "~/Dropbox/Org/organizer/notes.org")
 
-    (setq org-agenda-files (list "~/Dropbox/org/notes.org"
-                                 "~/Dropbox/org/blog.org"
-                                 "~/Dropbox/org/work.org"))
+  (setq org-agenda-files (list "~/Dropbox/Org/organizer/"))
 
-    (setq org-archive-location (concat org-directory "/notes-archive"))
+  (setq org-archive-location (concat org-directory "/notes-archive"))
 
-    ;; fontify code in code blocks
-    (setq org-src-fontify-natively t)
-    (setq org-src-tab-acts-natively t)
 
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((sh         . t)
-       (js         . t)
-       (emacs-lisp . t)
-       (clojure    . t)
-       (python     . t)
-       (C          . t)
-       (dot        . t)
-       (scheme     . t)
-       (css        . t)
-       (go        . t)))
+  (defun wm-org-skip-subtree-if-priority (priority)
+    "Skip an agenda subtree if it has a priority of PRIORITY.
 
-    ;; use org-bullets in org-mode
-    (add-hook 'org-mode-hook (lambda ()
-                               (org-bullets-mode 1)
-                               (variable-pitch-mode t)
-                               ))
+  PRIORITY may be one of the characters ?A, ?B, or ?C."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (pri-value (* 1000 (- org-lowest-priority priority)))
+          (pri-current (org-get-priority (thing-at-point 'line t))))
+      (if (= pri-value pri-current)
+          subtree-end
+        nil)))
 
-    (defvar org-capture-templates)
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
-             "* TODO %?" :prepend t)
-            ("n" "Note" entry (file+headline org-default-notes-file "Notes")
-             "* %?")
-            ("b" "Blog Idea" entry (file+headline org-default-notes-file "Blog Ideas")
-             "* %?")
-            ("z" "Work Task" entry (file+headline org-work-file "Work Tasks")
-             "* TODO %?" :prepend t)
-            ("l" "Listen" entry (file+headline org-default-notes-file "Listen")
-             "* %?")
-            ("r" "Read" entry (file+headline org-default-notes-file "Read")
-             "* %?")
-            ("w" "Watch" entry (file+headline org-default-notes-file "Watch")
-             "* %?")
-            ("W" "Work Note" entry (file+headline org-work-file "Work Notes")
-             "* %?")
-            ("p" "Post" plain (file (wm/hugo-new))
-             (file "~/.emacs.d/org-templates/blogpost.orgcaptmpl"))
-            ("s" "Staff Meeting" entry  (file (wm/staff-meeting))
-             (file "~/.emacs.d/org-templates/staff_meeting.orgcaptmpl"))
-            ))
+  (setq org-agenda-custom-commands
+        '(("d" "Daily Agenda"
+          ((tags "PRIORITY=\"A\""
+                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                  (org-agenda-overriding-header "High-priority unfinished tasks:")))
+            (agenda "")
+            (alltodo ""
+                    ((org-agenda-skip-function
+                      '(or (wm-org-skip-subtree-if-priority ?A)
+                            (org-agenda-skip-if nil '(scheduled deadline))))))))))
+  (use-package org-agenda)
+  ;; Setup Org Agenda, for Evil
+  (define-key org-agenda-mode-map "j" 'org-agenda-next-item)
+  (define-key org-agenda-mode-map "k" 'org-agenda-previous-item)
 
-    (setq org-columns-default-format
-          "%25ITEM %TODO %3PRIORITY %10CLOCKSUM(Total Time) %CLOCKSUM_T(Time Today)")
+  ;; fontify code in code blocks
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
 
-    ;; Not really using this anymore, but perhaps I should?
-    (use-package harvest
-      :ensure t)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sh         . t)
+     (js         . t)
+     (emacs-lisp . t)
+     (clojure    . t)
+     (python     . t)
+     (C          . t)
+     (dot        . t)
+     (scheme     . t)
+     (css        . t)
+     (go        . t)))
 
-    (require 'harvest)
-    ;; (add-hook 'org-clock-in-hook 'harvest)
-    ;; (add-hook 'org-clock-out-hook 'harvest-clock-out)
+  ;; use org-bullets in org-mode
+  (add-hook 'org-mode-hook (lambda ()
+                             (org-bullets-mode 1)
+                             (variable-pitch-mode t)
+                             ))
 
-    (setq org-return-follows-link t)
+  (defvar org-capture-templates)
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline org-default-notes-file "Tasks")
+           "* TODO %?" :prepend t)
+          ("n" "Note" entry (file+headline org-default-notes-file "Notes")
+           "* %?")
+          ("b" "Blog Idea" entry (file+headline org-default-notes-file "Blog Ideas")
+           "* %?")
+          ("z" "Work Task" entry (file+headline org-work-file "Work Tasks")
+           "* TODO %?" :prepend t)
+          ("l" "Listen" entry (file+headline org-default-notes-file "Listen")
+           "* %?")
+          ("r" "Read" entry (file+headline org-default-notes-file "Read")
+           "* %?")
+          ("w" "Watch" entry (file+headline org-default-notes-file "Watch")
+           "* %?")
+          ("W" "Work Note" entry (file+headline org-work-file "Work Notes")
+           "* %?")
+          ("p" "Post" plain (file (wm/hugo-new))
+           (file "~/.emacs.d/org-templates/blogpost.orgcaptmpl"))
+          ("s" "Staff Meeting" entry  (file (wm/staff-meeting))
+           (file "~/.emacs.d/org-templates/staff_meeting.orgcaptmpl"))
+          ))
 
+  (setq org-columns-default-format
+        "%25ITEM %TODO %3PRIORITY %10CLOCKSUM(Total Time) %CLOCKSUM_T(Time Today)")
+
+  ;; Not really using this anymore, but perhaps I should?
+  (use-package harvest
+    :ensure t)
+
+  (require 'harvest)
+  ;; (add-hook 'org-clock-in-hook 'harvest)
+  ;; (add-hook 'org-clock-out-hook 'harvest-clock-out)
+
+  (setq org-return-follows-link t)
+
+  (use-package ox-hugo
+    :ensure t
+    :defer t
+    :after ox)
 
 #+END_SRC
 
@@ -778,7 +821,7 @@ http://tromey.com/blog/?p=831
     :ensure t
     :config
     ;;(setq ac-dwim t)
-    (ac-config-default)
+    ;;(ac-config-default)
     ;;(setq ac-sources '(ac-source-yasnippet
     ;;                   ac-source-abbrev
     ;;                   ac-source-words-in-same-mode-buffers))
@@ -795,6 +838,16 @@ http://tromey.com/blog/?p=831
 
   (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+  ;; (add-hook 'magit-process-mode-hook
+  ;;         (lambda ()
+  ;;           (colorize-compilation-buffer)
+  ;;           (message "gotem")
+  ;;       )
+  ;; )
+
+
+  (add-hook 'magit-process-mode-hook 'colorize-compilation-buffer)
+
   (add-hook 'term-mode-hook
       (lambda ()
         (setq term-buffer-maximum-size 10000)))
@@ -807,7 +860,7 @@ http://tromey.com/blog/?p=831
         `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
         `((".*" ,temporary-file-directory t)))
-   
+
   (setq make-backup-files nil)
 
   ;;(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
@@ -861,7 +914,7 @@ http://tromey.com/blog/?p=831
         `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
         `((".*" ,temporary-file-directory t)))
-   
+
   (setq make-backup-files nil)
 
   (use-package rainbow-delimiters
@@ -911,26 +964,27 @@ http://tromey.com/blog/?p=831
 
 #+BEGIN_SRC emacs-lisp
 
-    (use-package org-present
-      :ensure nil
-      :defer t
-      :bind (("<f8>" . org-present)
-             ("S-<f8>" . org-present-quit)
-             ("<f9>" . org-present-next)
-             ("S-<f9>" . org-present-prev))
-      :init
-      (add-hook 'org-present-mode-hook
-                (lambda ()
-                  (org-present-big)
-                  (org-display-inline-images)
-                  (org-present-hide-cursor)
-                  (org-present-read-only)))
-      (add-hook 'org-present-mode-quit-hook
-                (lambda ()
-                  (org-present-small)
-                  (org-remove-inline-images)
-                  (org-present-show-cursor)
-                  (org-present-read-write))))
+  (use-package org-present
+    :ensure t
+    :defer t
+    :bind (("<f8>" . org-present)
+           ("S-<f8>" . org-present-quit)
+           ("<f9>" . org-present-next)
+           ("S-<f9>" . org-present-prev))
+    :init
+    (setq org-present-text-scale 3)
+    (add-hook 'org-present-mode-hook
+              (lambda ()
+                (org-present-big)
+                (org-display-inline-images)
+                (org-present-hide-cursor)
+                (org-present-read-only)))
+    (add-hook 'org-present-mode-quit-hook
+              (lambda ()
+                (org-present-small)
+                (org-remove-inline-images)
+                (org-present-show-cursor)
+                (org-present-read-write))))
 
 #+END_SRC 
 * Flymd
@@ -1119,10 +1173,57 @@ https://alysivji.github.io/setting-up-pyenv-virtualenvwrapper.html
 
 #+BEGIN_SRC emacs-lisp
 
-    (use-package pyenv-mode
-      :ensure t)
 
-    (use-package elpy
-      :ensure t)
+    (defun wm/python-mode-hook()
+      "Python Hook"
+      (message "Running Python Mode Hook")
+      (company-mode +1)
+    )
+
+    (use-package python
+      :mode ("\\.py" . python-mode)
+      :config
+      (use-package elpy
+        :ensure t
+        :init
+        (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+        :config
+        ;;(setq elpy-rpc-backend "jedi")
+        ;;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+        (add-hook 'python-mode-hook 'wm/python-mode-hook)
+
+        ;;flycheck-python-flake8-executable "/usr/local/bin/flake8"
+        :bind (:map elpy-mode-map
+            ("M-." . elpy-goto-definition)
+            ("M-," . pop-tag-mark)))
+      (elpy-enable))
+
+
+  (use-package pip-requirements
+    :ensure t
+    :config
+    (add-hook 'pip-requirements-mode-hook #'pip-requirements-auto-complete-setup))
+
+  (use-package py-autopep8
+    :ensure t)
+
+
+
+
+
+
+
+
+
+
+      (use-package pyenv-mode
+        :ensure t)
+
+      ;; (use-package elpy
+      ;;   :ensure t
+      ;;   :config
+      ;;   (add-hook 'before-save-hook 'elpy-autopep8-fix-code nil 'local)
+      ;;   :init
+      ;;   (add-hook 'python-mode-hook 'elpy-enable))
 
 #+END_SRC
