@@ -507,7 +507,12 @@ before packages are loaded."
 
   (remove-hook 'python-mode-hook 'importmagic-mode)
 
+  ;; Since my .spacemacs is now a symlink, I don't want to be asked
+  ;; if I "really" want to follow the link. Because I surely do.
+  (setq vc-follow-symlinks t)
   )
+
+
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
