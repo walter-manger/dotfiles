@@ -56,7 +56,11 @@ This function should only modify configuration layer settings."
      helm ;;ivy ;; Search is not working with this... HATE
      markdown
      ;;multiple-cursors
-     org
+     (org :variables
+          org-enable-hugo-support t
+          org-enable-reveal-js-support t
+          ;;org-projectile-file "~/Dropbox/Org/organizer/project-todos.org"
+          )
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -180,7 +184,8 @@ It should only modify the values of Spacemacs settings."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'.
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
+   dotspacemacs-startup-lists '((agenda . 3)
+                                (recents . 5)
                                 (projects . 7))
 
    ;; True if the home buffer should respond to resize events. (default t)
@@ -504,14 +509,36 @@ before packages are loaded."
   (eval-after-load "company"
     '(add-to-list 'company-backends 'company-anaconda))
 
+  (with-eval-after-load 'org
+    (setq org-directory "~/Dropbox/Org/organizer")
+    (setq org-agenda-files (directory-files (concat org-directory "/.agenda-files/") t ".org" nil))
+
+    ;; Inspired by: http://huxiaoxing.com/setup/emacs/
+    (setq org-capture-templates
+          `(("x" "xpro todo" entry
+             (file+olp ,(concat org-directory "/.agenda-files/work.org") "Tasks" "Projects" "XPRO")
+             "* TODO %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n:LOGBOOK:\n- Added: %U\n:END:"
+             :empty-lines 1)
+            ("n" "note" entry
+             (file+headline ,(concat org-directory "/.agenda-files/work.org") "Notes")
+              "* %^{description}\n:LOGBOOK:\n- Added: %U\n:END:\n\n%?"
+             :empty-lines 1)
+            ))
+    )
+
 
   (remove-hook 'python-mode-hook 'importmagic-mode)
 
   ;; Since my .spacemacs is now a symlink, I don't want to be asked
   ;; if I "really" want to follow the link. Because I surely do.
   (setq vc-follow-symlinks t)
-  )
 
+  ;; (setq org-directory "~/Dropbox/Org/organizer/.agenda-files"
+  ;;       ;;org-agenda-files (concat org-directory "/.agenda-files")
+  ;;       org-log-into-drawer 1
+  ;;       org-archive-mark-done nil)
+
+  )
 
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -526,9 +553,10 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-trello-current-prefix-keybinding "C-c o")
  '(package-selected-packages
    (quote
-    (ibuffer-projectile helm-org-rifle helm-gitignore helm-git-grep helm-css-scss helm-company helm-c-yasnippet flyspell-correct-helm web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd haml-mode emmet-mode counsel-css company-web web-completion-data web-mode tide typescript-mode import-js grizzl add-node-modules-path yaml-mode yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope helm xcscope helm-core ggtags cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic yasnippet-snippets xterm-color wgrep unfill smex smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup ivy-yasnippet ivy-xref ivy-purpose ivy-hydra htmlize gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company browse-at-remote auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
+    (ox-hugo org-trello request-deferred org-re-reveal ibuffer-projectile helm-org-rifle helm-gitignore helm-git-grep helm-css-scss helm-company helm-c-yasnippet flyspell-correct-helm web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd haml-mode emmet-mode counsel-css company-web web-completion-data web-mode tide typescript-mode import-js grizzl add-node-modules-path yaml-mode yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope helm xcscope helm-core ggtags cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic yasnippet-snippets xterm-color wgrep unfill smex smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup ivy-yasnippet ivy-xref ivy-purpose ivy-hydra htmlize gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company browse-at-remote auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
