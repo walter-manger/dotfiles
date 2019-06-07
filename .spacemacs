@@ -34,12 +34,18 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(racket
+     (scheme)
+     emms
      restclient
      html
+     elixir
+     erlang
+     (csharp)
      (haskell :variables
               haskell-process-type 'stack-ghci
               haskell-completion-backend 'intero
               haskell-enable-hindent-style "johan-tibell"
+              haskell-interactive-mode-hide-multi-line-errors t
               )
      (ibuffer :variables ibuffer-group-buffers-by 'projects)
      (typescript :variables
@@ -50,6 +56,7 @@ This function should only modify configuration layer settings."
              python-test-runner 'pytest
              python-auto-set-local-pyenv-version 'on-project-switch
              python-sort-imports-on-save t
+             python-shell-completion-native-enable nil
              )
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -482,6 +489,8 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq-default omnisharp-server-executable-path "omnisharp")
+
   (setq-default
    ispell-program-name "/usr/local/bin/aspell"
    dired-dwim-target t)
@@ -555,6 +564,8 @@ before packages are loaded."
   ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   ;; (add-to-list 'exec-path "~/.local/bin/")
 
+  (org-babel-do-load-languages 'org-babel-load-languages (cons '(haskell . t) org-babel-load-languages))
+
   )
 
 
@@ -573,7 +584,7 @@ This function is called at the very end of Spacemacs initialization."
  '(org-trello-current-prefix-keybinding "C-c o")
  '(package-selected-packages
    (quote
-    (racket-mode faceup company-quickhelp restclient-helm ob-restclient ob-http company-restclient restclient know-your-http-well ox-hugo org-trello request-deferred org-re-reveal ibuffer-projectile helm-org-rifle helm-gitignore helm-git-grep helm-css-scss helm-company helm-c-yasnippet flyspell-correct-helm web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd haml-mode emmet-mode counsel-css company-web web-completion-data web-mode tide typescript-mode import-js grizzl add-node-modules-path yaml-mode yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope helm xcscope helm-core ggtags cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic yasnippet-snippets xterm-color wgrep unfill smex smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup ivy-yasnippet ivy-xref ivy-purpose ivy-hydra htmlize gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company browse-at-remote auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
+    (emms ob-elixir flycheck-mix flycheck-credo erlang alchemist elixir-mode omnisharp csharp-mode geiser racket-mode faceup company-quickhelp restclient-helm ob-restclient ob-http company-restclient restclient know-your-http-well ox-hugo org-trello request-deferred org-re-reveal ibuffer-projectile helm-org-rifle helm-gitignore helm-git-grep helm-css-scss helm-company helm-c-yasnippet flyspell-correct-helm web-beautify tagedit slim-mode scss-mode sass-mode pug-mode prettier-js impatient-mode simple-httpd haml-mode emmet-mode counsel-css company-web web-completion-data web-mode tide typescript-mode import-js grizzl add-node-modules-path yaml-mode yapfify stickyfunc-enhance pytest pyenv-mode py-isort pippel pipenv pyvenv pip-requirements live-py-mode importmagic epc ctable concurrent deferred helm-pydoc helm-gtags helm-cscope helm xcscope helm-core ggtags cython-mode counsel-gtags company-anaconda blacken anaconda-mode pythonic yasnippet-snippets xterm-color wgrep unfill smex smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download org-brain mwim multi-term mmm-mode markdown-toc markdown-mode magit-svn magit-gitflow magit-popup ivy-yasnippet ivy-xref ivy-purpose ivy-hydra htmlize gnuplot gitignore-templates gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-ivy flyspell-correct flycheck-pos-tip pos-tip evil-org evil-magit magit transient git-commit with-editor eshell-z eshell-prompt-extras esh-help diff-hl company-statistics company browse-at-remote auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler writeroom-mode winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package treemacs-projectile treemacs-evil toc-org symon string-inflection spaceline-all-the-icons restart-emacs request rainbow-delimiters popwin persp-mode pcre2el password-generator paradox overseer org-plus-contrib org-bullets open-junk-file nameless move-text macrostep lorem-ipsum link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio font-lock+ flycheck-package flx-ido fill-column-indicator fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-cleverparens evil-args evil-anzu eval-sexp-fu elisp-slime-nav editorconfig dumb-jump dotenv-mode doom-modeline diminish define-word counsel-projectile column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile aggressive-indent ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
