@@ -1,15 +1,25 @@
-export ZSH=~/.oh-my-zsh
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="bira"
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# Path to your oh-my-zsh installation.
+export ZSH=/Users/wmanger/.oh-my-zsh
+
+# Set name of the theme to load. Optionally, if you set this to "random"
+# it'll load a random theme each time that oh-my-zsh is loaded.
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+# ZSH_THEME="robbyrussell"
+ZSH_THEME=""
+autoload -U promptinit; promptinit
+prompt pure
+
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
 # Uncomment the following line to disable bi-weekly auto-update checks.
-DISABLE_AUTO_UPDATE="true"
-DISABLE_UPDATE_PROMPT="true"
+# DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
@@ -43,46 +53,15 @@ DISABLE_UPDATE_PROMPT="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git vi-mode zsh-wakatime zsh-completions kubectl)
+plugins=(git colorize brew npm)
+
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/bin:$HOME/.local/bin"
-export GOPATH=$HOME/go
-export GOROOT=/usr/local/go
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+# export MANPATH="/usr/local/man:$MANPATH"
 
-export PATH=$PATH:$HOME/bin/protoc-3.2.0-osx-x86_64/bin
-export pc6=$GOPATH/src/github.com/powerchordinc/platform
-unsetopt nomatch
-
-alias l='ls -al'
-alias ls='ls -GFh'
-alias pc6='cd $pc6'
-alias e='emacsclient $1'
-alias emacs='emacsclient $1'
-alias schemas='npm run schemas sync -- --trunk $1 --email wmanger@powerchordsystem.com'
-alias kp='kubectl get pods'
-alias kl='kubectl logs $1'
-alias ks='kubectl scale $1 --replicas=0 && kubectl scale $1 --replicas=1'
-alias ke='kubectl exec $1 -it "/bin/bash"'
-alias killmc='minikube delete || true && rm -rf ~/.minikube'
-
-
-export NVM_DIR="$HOME/.nvm"
-   . "$(brew --prefix nvm)/nvm.sh"
-
- #https://api.runscope.com/radar/47fa712b-b960-498a-85d7-babdee53e3a4/trigger?domain=http://api.pclocal.us&runscope_environment=db652228-9266-46db-a098-2b661f238308 
- source $ZSH/oh-my-zsh.sh
-
-#Python Stuff
-
-export PIP_REQUIRE_VIRTUALENV=true
-
-# Wakatime
-
-
-#You may need to manually set your language environment
+# You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
@@ -96,7 +75,7 @@ export PIP_REQUIRE_VIRTUALENV=true
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -106,16 +85,26 @@ export PIP_REQUIRE_VIRTUALENV=true
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-# 
-# bindkey -v
-#alias tmux="TERM=screen-256color-bce tmux"
 
-fpath=( ~/.zfunc "${fpath[@]}")
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
-source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/waltermanger/bin/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/waltermanger/bin/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/wmanger/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/wmanger/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/waltermanger/bin/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/waltermanger/bin/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/wmanger/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/wmanger/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
